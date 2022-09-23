@@ -23,9 +23,9 @@ services:
     image: influxdb:latest
     container_name: influxdb2
     volumes:
-      - /mnt/influxdb/data:/var/lib/influxdb2:rw
+      - ../influx/data:/var/lib/influxdb2:rw
     env_file:
-      - influx.env
+      - .env
     entrypoint: ["./entrypoint.sh"]
     ports:
       - 8086:8086
@@ -40,9 +40,9 @@ services:
       #  Sync timezone with host
       - /etc/localtime:/etc/localtime:ro
       #  Map Telegraf configuration file
-      - /mnt/influxdb/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
       #  Map /tmp to permanent storage  (this includes /tmp/metrics.out)
-      - /mnt/influxdb:/tmp:rw
+      - ../telegraf/outputs:/tmp:rw
     restart: unless-stopped
     depends_on:
       - influxdb
