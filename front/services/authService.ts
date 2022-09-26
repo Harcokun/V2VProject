@@ -26,11 +26,11 @@ export default class AuthService {
         return response;
     }
 
-    public isLogin() {
+    public isKioskLogin() {
         return localStorage.getItem('access token') != null;
     }
 
-    public async getUserInfo() {
+    public async getKioskInfo() {
         const response = await this.apiService.get(Endpoint.ME);
         return response.data.data;
     }
