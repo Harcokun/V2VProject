@@ -19,30 +19,32 @@ services:
       - MYSQL_ROOT_PASSWORD=AdhocAdmin
       - MYSQL_DATABASE=Adhoc
 
-  influxdb:
-    image: influxdb:latest
-    container_name: influxdb2
-    volumes:
-      - ../influx/data:/var/lib/influxdb2:rw
-    env_file:
-      - .env
-    entrypoint: ["./entrypoint.sh"]
-    ports:
-      - 8086:8086
-    restart: unless-stopped
+  # influxdb:
+  #   image: influxdb:latest
+  #   container_name: influxdb2
+  #   volumes:
+  #     - ../influx/data:/var/lib/influxdb2:rw
+  #   env_file:
+  #     - .env
+  #   entrypoint: ["./entrypoint.sh"]
+  #   ports:
+  #     - 8086:8086
+  #   restart: unless-stopped
 
-  telegraf:
-    image: telegraf:latest
-    container_name: telegraf
-    links:
-      - influxdb
-    volumes:
-      #  Sync timezone with host
-      - /etc/localtime:/etc/localtime:ro
-      #  Map Telegraf configuration file
-      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
-      #  Map /tmp to permanent storage  (this includes /tmp/metrics.out)
-      - ../telegraf/outputs:/tmp:rw
-    restart: unless-stopped
-    depends_on:
-      - influxdb
+  # telegraf:
+  #   image: telegraf:latest
+  #   container_name: telegraf
+  #   links:
+  #     - influxdb
+  #   volumes:
+  #     #  Sync timezone with host
+  #     - /etc/localtime:/etc/localtime:ro
+  #     #  Map Telegraf configuration file
+  #     - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+  #     #  Map /tmp to permanent storage  (this includes /tmp/metrics.out)
+  #     - ../telegraf/outputs:/tmp:rw
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - influxdb
+  #   ports:
+  #     - '127.0.0.1:8125:8125/udp'
