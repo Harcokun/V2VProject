@@ -1,3 +1,9 @@
 front/node_modules/*
 
 back/.env
+
+influx/*
+
+telegraf/*
+
+influxd.bolt
