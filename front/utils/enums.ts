@@ -5,4 +5,7 @@
     LOGOUT = "/api/logout",
     ME = "/api/me",
     // Car
+    CAR = "/api/car",
+    SPEED = "/api/car/speed",
+    DIR = "api/car/dir",
 }

@@ -11,6 +11,7 @@ const Header: React.FC<LayoutProps> = ({ children }) => {
 						w-full
 						h-[100px]
 						bg-gradient-to-r from-secondary to-primary
+            shadow-lg
             "
     >
       {children}
