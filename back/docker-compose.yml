@@ -15,6 +15,7 @@ services:
       - MYSQL_DATABASE=${DOCKER_MARIADB_DATABASE}
   influxdb:
     image: influxdb:2.1.1
+    container_name: influxdb2
     volumes:
       - influxdb-storage:/var/lib/influxdb2:rw
     env_file:
@@ -26,6 +27,7 @@ services:
 
   telegraf:
     image: telegraf:1.19
+    container_name: telegraf
     volumes:
       - ${TELEGRAF_CFG_PATH}:/etc/telegraf/telegraf.conf:rw
     env_file:
@@ -35,6 +37,7 @@ services:
 
   grafana:
     image: grafana/grafana-oss:8.4.3
+    container_name: grafana
     volumes:
       - grafana-storage:/var/lib/grafana:rw
     depends_on:
