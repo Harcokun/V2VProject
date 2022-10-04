@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const routes_1 = __importDefault(require("./routes"));
 dotenv_1.default.config({
     path: "./config/config.env"
 });
@@ -15,5 +16,5 @@ app.get('/', (req, res) => {
 });
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
-    console.log(`${process.env.INFLUX_URL} ${process.env.INFLUX_ORG}`);
+    (0, routes_1.default)(app);
 });

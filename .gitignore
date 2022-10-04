@@ -1,6 +1,8 @@
 front/node_modules/*
 back/node_modules/*
 back/config/config.env
+back/*.js
+back/*/*.js
 
 back/.env
 
