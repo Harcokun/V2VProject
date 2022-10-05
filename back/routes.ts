@@ -4,8 +4,12 @@ import { writeDataToInflux } from "./services/write_data";
 import { deleteData } from "./services/delete_data";
 
 export default function (app: Express) {
-    app.get('/getLocation', (req: Request, res: Response) => {
-        res.send(queryData());
+    app.get('/getLocation', async (req: Request, res: Response) => {
+        const data = await queryData();
+        console.log(data);
+        res.status(200).json({
+            data: data
+        });
     })
 
     app.post('/postLocation', (req: Request, res: Response) => {

@@ -29,7 +29,7 @@ export async function deleteData(): Promise<void> {
       start: start.toISOString(),
       stop: stop.toISOString(),
       // see https://docs.influxdata.com/influxdb/latest/reference/syntax/delete-predicate/
-      predicate: '_measurement="mem"',
+      predicate: '_measurement="car_info"',
     },
   })
 }
