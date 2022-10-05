@@ -1,5 +1,5 @@
 import { InfluxDB } from '@influxdata/influxdb-client';
-import { url, token, org } from '../env'
+import { url, token, org } from '../../env'
 
 export async function queryData(car_id: string) {
     const queryApi = new InfluxDB({ url, token }).getQueryApi(org);
