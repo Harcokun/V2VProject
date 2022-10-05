@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import routes from './routes';
+import pool from './config/db.ts'
 
 dotenv.config({
     path: "./config/config.env"

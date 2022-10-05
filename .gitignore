@@ -3,6 +3,8 @@ back/node_modules/*
 back/config/config.env
 back/*.js
 back/*/*.js
+back/services/influxDB/*.js
+back/services/mariaDB/*.js
 
 back/.env
 
