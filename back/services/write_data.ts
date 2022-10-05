@@ -17,6 +17,7 @@ export async function writeDataToInflux(data: string) {
         .intField('piece', d.Piece)
         .intField('location', d.Location)
         .booleanField('clockwise', d.Clockwise)
+        .floatField('velocity', d.Velocity)
     writeAPI.writePoint(point)
     writeAPI
     .close()
