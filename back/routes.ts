@@ -9,7 +9,7 @@ export default function (app: Express) {
     })
 
     app.post('/postLocation', (req: Request, res: Response) => {
-        const data: string = '{"Device": "1", "Piece": "1", "Location": "1", "clockwise": "true"}';
+        const data: string = '{"Device": "1", "Piece": "1", "Location": "1", "Clockwise": "true"}';
         res.send(writeDataToInflux(data));
     })
 

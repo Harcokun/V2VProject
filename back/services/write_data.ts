@@ -7,11 +7,16 @@ export async function writeDataToInflux(data: string) {
     const writeAPI = influx.getWriteApi(org, bucket, 'ms');
 
     const d = JSON.parse(data);
+    console.log(d.Device);
+    console.log(d);
     console.log('*** WRITE POINTS ***')
 
-    const point = new Point('mem')
-    .tag('host', 'host1')
-    .floatField('used_percent', 23.43234543)
+    const point = new Point('metrics')
+    .tag('Car', 'id')
+        .intField('car_registration', d.Device)
+        .intField('piece', d.Piece)
+        .intField('location', d.Location)
+        .booleanField('clockwise', d.Clockwise)
     writeAPI.writePoint(point)
     writeAPI
     .close()
