@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import routes from './routes';
-import pool from './config/db.ts'
+import bodyParser from 'body-parser';
 
 dotenv.config({
     path: "./config/config.env"
@@ -10,7 +10,8 @@ dotenv.config({
 const app: Express = express();
 const port = process.env.PORT;
 
-
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
 app.get('/', (req: Request, res: Response) => {
   res.send('Express + TypeScript Server');
 });

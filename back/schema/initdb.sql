@@ -1,3 +1,4 @@
+GRANT USAGE ON *.* TO 'adhoc'@'%' IDENTIFIED BY 'adhoc';
 use Car;
 CREATE TABLE IF NOT EXISTS `car` (
   `car_registration` int(11) NOT NULL,
