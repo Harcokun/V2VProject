@@ -7,6 +7,7 @@ import { useContainer } from "../containers/containerProvider";
 
 // Components
 import Header from './Header';
+import Sidebar from './Sidebar';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -38,7 +39,8 @@ const Layout: React.FC<LayoutProps> = ({
           </span>
         </div>
       </Header>
-      <main className="w-full">{children}</main>
+      <Sidebar/>
+      <main className="absolute left-[19%] w-[95%]">{children}</main>
     </>
   );
 };

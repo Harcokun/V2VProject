@@ -3,23 +3,20 @@ import Card from "./Card";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import ButtonWithIcon from "../Button/ButtonWithIcon";
+import CarInfo from "../../utils/types";
+
+const SPEED_MULTIPLIER = 250;
 
 interface CarInfoCardProps {
   isFetched: boolean;
-  carName: string;
-  currentSpeed: number;
-  blockIndex: number;
-  locationIndex: number;
+  carInfo: CarInfo;
   handleDirectionChange: (dir: string) => void;
   handleSpeedChange: (speedDiff: number) => void;
 }
 
 const CarInfoCard: React.FC<CarInfoCardProps> = ({
   isFetched,
-  carName,
-  currentSpeed,
-  blockIndex,
-  locationIndex,
+  carInfo,
   handleDirectionChange,
   handleSpeedChange,
 }) => {
@@ -27,7 +24,7 @@ const CarInfoCard: React.FC<CarInfoCardProps> = ({
   const [isSpeedUpAvaibable, setSpeedUpAvailable] = useState(true);
   const [isSpeedDownAvaibable, setSpeedDownAvailable] = useState(false);
   const speedLevelValidation = (speedLevelDiff: number) => {
-    if (speedLevel + speedLevelDiff >= 10) {
+    if (speedLevel + speedLevelDiff >= 4) {
       setSpeedUpAvailable(false);
       console.log(`Cannot increase speed!`);
       console.log(`isSpeedUpAvaibable: ${isSpeedUpAvaibable}`);
@@ -37,19 +34,19 @@ const CarInfoCard: React.FC<CarInfoCardProps> = ({
       console.log(`Cannot decrease speed!`);
       console.log(`isSpeedDownAvaibable: ${isSpeedDownAvaibable}`);
     }
-    if(0 < speedLevel + speedLevelDiff && speedLevel + speedLevelDiff < 10) {
+    if(0 < speedLevel + speedLevelDiff && speedLevel + speedLevelDiff < 4) {
       setSpeedUpAvailable(true);
       setSpeedDownAvailable(true);
     }
     console.log(`Current Speed Level: ${speedLevel}`);
-    handleSpeedChange(currentSpeed + (250 * speedLevelDiff)); // Need to wait for currentSpeed update
     setSpeedLevel(speedLevel + speedLevelDiff);
+    handleSpeedChange(SPEED_MULTIPLIER * speedLevel); // Need to wait for currentSpeed update
   };
 
   if (isFetched) {
     return (
-      <Card heading={carName + " Data"}>
-        <div className="flex-col justify-center items-center">
+      <Card heading={carInfo.name + " Data"}>
+        <div className="text-center">
           <Image
             className="flex justify-center items-center"
             src="/images/directions_car_24px_outlined.svg"
@@ -64,7 +61,7 @@ const CarInfoCard: React.FC<CarInfoCardProps> = ({
               <tr className="py-2">
                 <td className="text-left">Current Speed</td>
                 <td className="text-right text-emerald-600 text-xl">
-                  {currentSpeed} mm/s
+                  {carInfo.speed} mm/s, Level {speedLevel}
                 </td>
               </tr>
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
@@ -113,7 +110,7 @@ const CarInfoCard: React.FC<CarInfoCardProps> = ({
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
                 <td className="text-left">Location</td>
                 <td className="text-right text-amber-500 text-xl">
-                  Block {blockIndex}, Index {locationIndex}
+                  Block {carInfo.block}, Index {carInfo.index}
                 </td>
               </tr>
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">

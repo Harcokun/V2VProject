@@ -16,30 +16,48 @@ const Dashboard: NextPage = () => {
       name: "car test 1",
       mac: "12345",
       speed: 10,
-      block: "A",
+      block: 1,
       index: 1,
     },
     {
       name: "car test 2",
-      mac: "12345",
+      mac: "67890",
       speed: 5,
-      block: "B",
+      block: 2,
       index: 1,
     },
   ]);
+  const [selectedCarInfo, setSelectedCarInfo] = useState({
+    name: "",
+    mac: "",
+    speed: 0,
+    block: -1,
+    index: -1,
+  });
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const carsInfo = carService.getCarsInfo().data;
-  //   setCarsList(carsInfo);
-  // }, []);
+  useEffect(() => {
+    const initialLoader = async () => {
+      // const carsInfo = await carService.getCarsInfo().data;
+      // setCarsList(carsInfo);
+      setSelectedCarInfo({
+        ...selectedCarInfo,
+        name: "car test 1",
+        mac: "12345",
+        speed: 5,
+        block: 1,
+        index: 1,
+      });
+    }
+    initialLoader();
+  }, []);
 
-  const handleSpeedChange = (speed: number) => {
-    carService.changeSpeed(speed);
+  const handleSpeedChange = async (speed: number) => {
+    const response = await carService.changeSpeed(speed);
   };
 
-  const handleDirectionChange = (dir: string) => {
-    carService.changeDir(dir);
+  const handleDirectionChange = async (dir: string) => {
+    const response = await carService.changeDir(dir);
   };
 
   return (
@@ -51,11 +69,8 @@ const Dashboard: NextPage = () => {
         </div>
         <div className="row-start-1 row-end-3 col-start-4 col-end-6">
           <CarInfoCard
-            isFetched={true}
-            carName="car_01"
-            currentSpeed={0}
-            blockIndex={0}
-            locationIndex={0}
+            isFetched={selectedCarInfo != null}
+            carInfo={selectedCarInfo}
             handleDirectionChange={handleDirectionChange}
             handleSpeedChange={handleSpeedChange}
           />
