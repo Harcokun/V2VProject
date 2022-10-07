@@ -28,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({}) => {
       <li
         className="static font-bold text-lg my-4 ml-10"
         onClick={() => {
-          router.push("/carmanagement");
+          router.push("/car");
         }}
       >
         Car Management
