@@ -3,16 +3,14 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useContainer } from "../containers/containerProvider";
-import Card from "../components/Card/Card";
-import CarInfoCard from "../components/Card/CarInfoCard";
-import MapCard from "../components/Card/MapCard";
-import ActiveCarCard from "../components/Card/ActiveCarCard";
+import CarListCard from "../components/Card/CarListCard";
 
 const Car: NextPage = () => {
   const { authService, carService } = useContainer();
   const [isFetched, setFetched] = useState(false);
   const [carsList, setCarsList] = useState([
     {
+      id: "1",
       name: "car test 1",
       mac: "12345",
       speed: 10,
@@ -20,6 +18,7 @@ const Car: NextPage = () => {
       index: 1,
     },
     {
+      id: "2",
       name: "car test 2",
       mac: "67890",
       speed: 5,
@@ -28,6 +27,7 @@ const Car: NextPage = () => {
     },
   ]);
   const [selectedCarInfo, setSelectedCarInfo] = useState({
+    id: "",
     name: "",
     mac: "",
     speed: 0,
@@ -48,16 +48,25 @@ const Car: NextPage = () => {
         block: 1,
         index: 1,
       });
-    }
+    };
     initialLoader();
   }, []);
 
   return (
     <div className="static">
-      <h1 className="static font-bold text-xl my-4 ml-10">Car</h1>
-      <div className="grid grid-rows-4 grid-cols-6 gap-4">
-        <div className="row-start-3 row-end-4 col-start-1 col-end-6">
-          <ActiveCarCard carsList={carsList} />
+      <h1 className="inline-block static font-bold text-xl my-4 ml-10">
+        Car Management
+      </h1>
+      <button
+        className="absolute inline-block top-4 right-[17%] bg-primary text-white text-sm
+                    px-4 h-8 rounded-full"
+        onClick={()=>{router.push("/addCar")}}
+      >
+        ADD NEW CAR
+      </button>
+      <div className="grid grid-rows-1 grid-cols-6 gap-4">
+        <div className="col-start-1 col-end-6">
+          <CarListCard heading="Car List" carsList={carsList} />
         </div>
       </div>
     </div>

@@ -34,7 +34,7 @@ const CarInfoCard: React.FC<CarInfoCardProps> = ({
       console.log(`Cannot decrease speed!`);
       console.log(`isSpeedDownAvaibable: ${isSpeedDownAvaibable}`);
     }
-    if(0 < speedLevel + speedLevelDiff && speedLevel + speedLevelDiff < 4) {
+    if (0 < speedLevel + speedLevelDiff && speedLevel + speedLevelDiff < 4) {
       setSpeedUpAvailable(true);
       setSpeedDownAvailable(true);
     }
@@ -155,16 +155,20 @@ const CarInfoCard: React.FC<CarInfoCardProps> = ({
   }
   return (
     <Card heading={"No Car Data"}>
-      <Image
-        className="flex justify-center items-center"
-        src="/images/directions_car_24px_outlined.svg"
-        alt="Test Map"
-        width={400}
-        height={150}
-        layout="intrinsic"
-        objectFit="scale-down"
-      />
-      <div className="text-center">Please select a car from the map.</div>
+      <div className="text-center">
+        <Image
+          className="flex justify-center items-center"
+          src="/images/directions_car_24px_outlined.svg"
+          alt="Test Map"
+          width={400}
+          height={150}
+          layout="intrinsic"
+          objectFit="scale-down"
+        />
+      </div>
+      <div className="text-center text-lg">
+        Please select a car from the map.
+      </div>
     </Card>
   );
 };

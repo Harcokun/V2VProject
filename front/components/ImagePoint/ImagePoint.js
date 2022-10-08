@@ -4,7 +4,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useState } from "react";
 // import dynamic from "next/dynamic";
 
-import logoTroyX from "../../public/images/testmap.png";
+import mapImage from "../../public/images/testmap.png";
 
 import Images from "./Images";
 // import Image from "next/image";
@@ -26,7 +26,7 @@ class ImagePoint extends Component {
     super(props);
 
     this.state = {
-      image: logoTroyX,
+      image: mapImage,
       circleList: [],
       stageRef: createRef(null),
       stageWidth: 0,
@@ -356,7 +356,7 @@ class CirclePointList extends Component {
 export default ImagePoint
 
 // const ImageTest = () => {
-//   return <Images img={logoTroyX} handleClickImage={undefined} />;
+//   return <Images img={mapImage} handleClickImage={undefined} />;
 // };
 
 // export default ImageTest;

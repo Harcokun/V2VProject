@@ -7,12 +7,14 @@ import Card from "../components/Card/Card";
 import CarInfoCard from "../components/Card/CarInfoCard";
 import MapCard from "../components/Card/MapCard";
 import ActiveCarCard from "../components/Card/ActiveCarCard";
+import Loading from "../components/Loading";
 
 const Dashboard: NextPage = () => {
   const { authService, carService } = useContainer();
   const [isFetched, setFetched] = useState(false);
   const [carsList, setCarsList] = useState([
     {
+      id: "1",
       name: "car test 1",
       mac: "12345",
       speed: 10,
@@ -20,6 +22,7 @@ const Dashboard: NextPage = () => {
       index: 1,
     },
     {
+      id: "2",
       name: "car test 2",
       mac: "67890",
       speed: 5,
@@ -28,6 +31,7 @@ const Dashboard: NextPage = () => {
     },
   ]);
   const [selectedCarInfo, setSelectedCarInfo] = useState({
+    id: "",
     name: "",
     mac: "",
     speed: 0,
@@ -37,28 +41,35 @@ const Dashboard: NextPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const initialLoader = async () => {
+    const fetchData = async () => {
       // const carsInfo = await carService.getCarsInfo().data;
       // setCarsList(carsInfo);
       setSelectedCarInfo({
         ...selectedCarInfo,
+        id: "1",
         name: "car test 1",
         mac: "12345",
         speed: 5,
         block: 1,
         index: 1,
       });
-    }
-    initialLoader();
+      setFetched(true);
+    };
+    const interval = setInterval(() => {
+      fetchData();
+    }, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleSpeedChange = async (speed: number) => {
-    const response = await carService.changeSpeed(speed);
+    const response = await carService.changeSpeed(selectedCarInfo.id, speed);
   };
 
   const handleDirectionChange = async (dir: string) => {
-    const response = await carService.changeDir(dir);
+    const response = await carService.changeDir(selectedCarInfo.id, dir);
   };
+
+  if(!isFetched) return <Loading/>
 
   return (
     <div className="static">
@@ -69,14 +80,14 @@ const Dashboard: NextPage = () => {
         </div>
         <div className="row-start-1 row-end-3 col-start-4 col-end-6">
           <CarInfoCard
-            isFetched={selectedCarInfo != null}
+            isFetched={selectedCarInfo.mac != ""}
             carInfo={selectedCarInfo}
             handleDirectionChange={handleDirectionChange}
             handleSpeedChange={handleSpeedChange}
           />
         </div>
         <div className="row-start-3 row-end-4 col-start-1 col-end-6">
-          <ActiveCarCard carsList={carsList} />
+          <ActiveCarCard heading="Activated Car Data" carsList={carsList} />
         </div>
       </div>
     </div>

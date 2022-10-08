@@ -13,13 +13,23 @@ export default class CarService {
         return response;
     }
 
-    public changeSpeed = async (speed: number) => {
-        const response = await this.apiService.post(Endpoint.SPEED, {speed}, false);
+    public addCar = async (data: any) => {
+        const response = await this.apiService.post(Endpoint.CAR, data, false);
         return response;
     }
 
-    public changeDir = async (dir: string) => {
-        const response = await this.apiService.post(Endpoint.DIR, {dir}, false);
+    public editCar = async (data: any) => {
+        const response = await this.apiService.patch(Endpoint.CAR, data, false);
+        return response;
+    }
+
+    public changeSpeed = async (id: string, speed: number) => {
+        const response = await this.apiService.post(Endpoint.SPEED, {id, speed}, false);
+        return response;
+    }
+
+    public changeDir = async (id: string, dir: string) => {
+        const response = await this.apiService.post(Endpoint.DIR, {id, dir}, false);
         return response;
     }
 
