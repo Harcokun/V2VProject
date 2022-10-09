@@ -4,25 +4,52 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import ButtonWithIcon from "../Button/ButtonWithIcon";
 import CarInfo from "../../utils/types";
+import { defaultCarInfo } from "../../utils/constants";
+import DropDownButton from "../Button/DropDownButton";
+import Button from "../Button/Button";
 
 const SPEED_MULTIPLIER = 250;
 
-interface CarInfoCardProps {
-  isFetched: boolean;
-  carInfo: CarInfo;
-  handleDirectionChange: (dir: string) => void;
-  handleSpeedChange: (speedDiff: number) => void;
+const CancelButtonStyle = {
+  default: {
+    background: "rgba(228, 48, 48, 0.1)",
+    border: "#E43030",
+    text: "#E43030",
+  },
+};
+
+interface CarControllerCardProps {
+  carsList: Array<CarInfo>;
+  carService: any;
 }
 
-const CarInfoCard: React.FC<CarInfoCardProps> = ({
-  isFetched,
-  carInfo,
-  handleDirectionChange,
-  handleSpeedChange,
+const CarControllerCard: React.FC<CarControllerCardProps> = ({
+  carsList,
+  carService,
 }) => {
+  const [selectedCarInfo, setSelectedCarInfo] = useState(defaultCarInfo);
+  const [isFetched, setFetched] = useState(false);
   const [speedLevel, setSpeedLevel] = useState(0);
   const [isSpeedUpAvaibable, setSpeedUpAvailable] = useState(true);
   const [isSpeedDownAvaibable, setSpeedDownAvailable] = useState(false);
+
+  useEffect(() => {
+    console.log(selectedCarInfo);
+  }, [selectedCarInfo]);
+
+  const getCarFromDropDown = (car: CarInfo) => {
+    setSelectedCarInfo(car);
+    setFetched(true);
+  };
+
+  const handleSpeedChange = async (speed: number) => {
+    const response = await carService.changeSpeed(selectedCarInfo._id, speed);
+  };
+
+  const handleDirectionChange = async (dir: string) => {
+    const response = await carService.changeDir(selectedCarInfo._id, dir);
+  };
+
   const speedLevelValidation = (speedLevelDiff: number) => {
     if (speedLevel + speedLevelDiff >= 4) {
       setSpeedUpAvailable(false);
@@ -45,7 +72,7 @@ const CarInfoCard: React.FC<CarInfoCardProps> = ({
 
   if (isFetched) {
     return (
-      <Card heading={carInfo.name + " Data"}>
+      <Card heading={selectedCarInfo.name + " Controller"}>
         <div className="text-center">
           <Image
             className="flex justify-center items-center"
@@ -56,12 +83,12 @@ const CarInfoCard: React.FC<CarInfoCardProps> = ({
             layout="fixed"
             objectFit="scale-down"
           />
-          <table className="font-sans w-5/6 mx-auto mb-4 text-s">
+          <table className="font-sans w-5/6 mx-auto text-s">
             <tbody>
               <tr className="py-2">
                 <td className="text-left">Current Speed</td>
                 <td className="text-right text-emerald-600 text-xl">
-                  {carInfo.speed} mm/s, Level {speedLevel}
+                  {selectedCarInfo.speed} mm/s, Level {speedLevel}
                 </td>
               </tr>
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
@@ -110,7 +137,7 @@ const CarInfoCard: React.FC<CarInfoCardProps> = ({
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
                 <td className="text-left">Location</td>
                 <td className="text-right text-amber-500 text-xl">
-                  Block {carInfo.block}, Index {carInfo.index}
+                  Block {selectedCarInfo.block}, Index {selectedCarInfo.index}
                 </td>
               </tr>
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
@@ -149,6 +176,15 @@ const CarInfoCard: React.FC<CarInfoCardProps> = ({
               </tr>
             </tbody>
           </table>
+          <Button
+                  text="Back"
+                  colorStyle={CancelButtonStyle}
+                  margin={[24, 0, 0, 0]}
+                  onClick={() => {
+                    setSelectedCarInfo(defaultCarInfo);
+                    setFetched(false);
+                  }}
+                />
         </div>
       </Card>
     );
@@ -167,10 +203,16 @@ const CarInfoCard: React.FC<CarInfoCardProps> = ({
         />
       </div>
       <div className="text-center text-lg">
-        Please select a car from the map.
+        Please select a car from the list to control.
+      </div>
+      <div className="ml-[30%] mt-4">
+        <DropDownButton
+          carsData={carsList}
+          getCarFromDropDown={getCarFromDropDown}
+        />
       </div>
     </Card>
   );
 };
 
-export default CarInfoCard;
+export default CarControllerCard;

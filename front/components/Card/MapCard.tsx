@@ -17,16 +17,7 @@ const MapCard: React.FC<MapCardProps> = ({ carsList }) => {
   return (
     <Card heading="Location">
       <div className="text-center">
-        <ImagePoint />
-        {/* <Image
-          className="flex justify-center items-center"
-          src="/images/testmap.png"
-          alt="Test Map"
-          width={600}
-          height={300}
-          layout="intrinsic"
-          objectFit="scale-down"
-        /> */}
+        <ImagePoint carsList={carsList} />
       </div>
     </Card>
   );

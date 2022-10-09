@@ -113,10 +113,7 @@ class ImagePoint extends Component {
     );
   };
 
-  handleClickImage = (e) => {
-    let { x, y } = this.calculateCoordination(e);
-
-    // do stuff
+  createPoint = (x, y) => {
     this.setState(
       {
         imageClickCoordList: [...this.state.imageClickCoordList, { x, y }],
@@ -153,6 +150,11 @@ class ImagePoint extends Component {
         );
       }
     );
+  }
+
+  handleClickImage = (e) => {
+    let { x, y } = this.calculateCoordination(e);
+    this.createPoint(x, y); // do stuff
   };
 
   handleClickLabel = (e) => {

@@ -1,8 +1,9 @@
 export default interface CarInfo {
-    id: string;
+    _id: string;
     name: string;
     mac: string;
     speed: number;
     block: number;
-    index: number
+    index: number;
+    clockwise: boolean;
 };

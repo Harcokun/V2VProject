@@ -1,39 +1,15 @@
 import { NextPage } from "next";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useContainer } from "../containers/containerProvider";
 import CarListCard from "../components/Card/CarListCard";
+import { defaultCarInfo ,defaultCarsList } from "../utils/constants";
 
 const Car: NextPage = () => {
   const { authService, carService } = useContainer();
   const [isFetched, setFetched] = useState(false);
-  const [carsList, setCarsList] = useState([
-    {
-      id: "1",
-      name: "car test 1",
-      mac: "12345",
-      speed: 10,
-      block: 1,
-      index: 1,
-    },
-    {
-      id: "2",
-      name: "car test 2",
-      mac: "67890",
-      speed: 5,
-      block: 2,
-      index: 1,
-    },
-  ]);
-  const [selectedCarInfo, setSelectedCarInfo] = useState({
-    id: "",
-    name: "",
-    mac: "",
-    speed: 0,
-    block: -1,
-    index: -1,
-  });
+  const [carsList, setCarsList] = useState(defaultCarsList);
+  const [selectedCarInfo, setSelectedCarInfo] = useState(defaultCarInfo);
   const router = useRouter();
 
   useEffect(() => {
@@ -47,6 +23,7 @@ const Car: NextPage = () => {
         speed: 5,
         block: 1,
         index: 1,
+        clockwise: true,
       });
     };
     initialLoader();

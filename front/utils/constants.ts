@@ -80,3 +80,34 @@ export const lookUpCoordinatation = {
     47: { x: 388.8, y: 320 },
   }, 
 };
+
+export const defaultCarInfo = {
+  _id: "",
+  name: "",
+  mac: "",
+  speed: 0,
+  block: -1,
+  index: -1,
+  clockwise: true,
+}
+
+export const defaultCarsList = [
+  {
+    _id: "1",
+    name: "car test 1",
+    mac: "12345",
+    speed: 10,
+    block: 33,
+    index: 0,
+    clockwise: true,
+  },
+  {
+    _id: "2",
+    name: "car test 2",
+    mac: "67890",
+    speed: 5,
+    block: 18,
+    index: 21,
+    clockwise: false,
+  },
+];
