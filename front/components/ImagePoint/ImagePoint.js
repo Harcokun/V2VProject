@@ -4,7 +4,8 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useState } from "react";
 // import dynamic from "next/dynamic";
 
-import mapImage from "../../public/images/testmap.png";
+import mapImage from "../../public/images/map.png";
+import { lookUpCoordinatation } from "../../utils/constants";
 
 import Images from "./Images";
 // import Image from "next/image";
@@ -121,6 +122,7 @@ class ImagePoint extends Component {
         imageClickCoordList: [...this.state.imageClickCoordList, { x, y }],
       },
       () => {
+        console.log(this.state.imageClickCoordList);
         this.setState(
           {
             circleList: [
@@ -353,7 +355,7 @@ class CirclePointList extends Component {
   }
 }
 
-export default ImagePoint
+export default ImagePoint;
 
 // const ImageTest = () => {
 //   return <Images img={mapImage} handleClickImage={undefined} />;

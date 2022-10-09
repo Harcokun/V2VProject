@@ -76,7 +76,7 @@ const Dashboard: NextPage = () => {
       <h1 className="static font-bold text-xl my-4 ml-10">Dashboard</h1>
       <div className="grid grid-rows-4 grid-cols-6 gap-4">
         <div className="row-start-1 row-end-3 col-start-1 col-end-4">
-          <MapCard />
+          <MapCard carsList={carsList}/>
         </div>
         <div className="row-start-1 row-end-3 col-start-4 col-end-6">
           <CarInfoCard
