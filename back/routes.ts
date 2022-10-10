@@ -2,7 +2,6 @@ import e, { Express, Request, Response } from "express";
 import { queryData } from "./services/influxDB/read_data";
 import { writeDataToInflux } from "./services/influxDB/write_data";
 import Mqtt from './services/mqtt/mqtt.services';
-import { Accident } from './models/accident.models'
 import { Car } from './models/car.models'
 
 declare global {
@@ -126,6 +125,22 @@ export default function (app: Express) {
         }
     })
 
+    app.get('/Car/info', async (req: Request, res: Response) => {
+        try {
+            const cars = await Car.find();
+            return res.status(200).json({
+                success: true, 
+                cars: cars
+            })
+        }
+        catch (err) {
+            console.log(err);
+            return res.status(400).json({
+                success: false
+            })
+        }
+    })
+
     app.get('/Car/info/:id', async (req: Request, res: Response) => {
         try {
             const car_registration = req.params.id;
@@ -214,65 +229,5 @@ export default function (app: Express) {
                 err: err
             })
         }
-    })
-
-    app.post('/Car/status', async (req: Request, res: Response) => {
-        try {
-            let body = req.body.body;
-            console.log(`Request: ${body}`);
-            body = body.slice(11, -1);
-            // console.log(`Request sub: ${body}`);
-            body = cutBackSlash(body);
-            // console.log(`Request sub 2: ${body}`);
-            body = JSON.parse(body);
-            console.log(body)
-            // console.log(body_json);
-            const deviceId = body.Device;
-            const status = body.Status; 
-            // console.log(status);
-            const car = await Car.findOneAndUpdate({ DeviceId: deviceId }, { Status: status }, {
-                new: true
-            });
-            if (!car) {
-                // console.log("no car");
-                let macId = "D6:93:EB:A8:C1:5D"; 
-                if (deviceId === "1e30fad7-ccc5-4523-85ad-1dfe966c3c29") {
-                    macId = "ED:9A:B3:A0:20:74"
-                } else if (deviceId === "a6b15e5b-4cd3-4e22-b7cf-2ae8d2872cda") {
-                    macId = "D6:93:EB:A8:C1:5D"
-                }
-                const car_obj = {
-                    MacId: macId, 
-                    DeviceId: deviceId,
-                    Status: status
-                }
-                // console.log(car_obj);
-                const data = await Car.create(car_obj)
-                console.log(`⚡️[database]: Car ${data.MacId}'s status is set to ${data.Status}`);
-                return res.status(200).json({
-                    success: true, 
-                    car: data
-                })
-            }
-            console.log(`⚡️[database]: Car ${car.MacId}'s status is set to ${car.Status}`);
-            return res.status(200).json({
-                success: true, 
-                // car: car
-            })            
-        } catch (err) {
-            console.log(err);
-            return res.status(400).json({
-                success: false
-            })
-        }
-    })
-}
-
-function cutBackSlash(str: string) { 
-    var index=str.indexOf("\\");
-    while(index >= 0){
-        str=str.replace("\\","");
-        index=str.indexOf("\\");
-    }
-    return str;
+    })    
 }
