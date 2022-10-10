@@ -15,7 +15,7 @@ const CarListCard: React.FC<CarListCardProps> = ({ heading, carsList }) => {
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Car Name</th>
+            <th scope="col">Car Model</th>
             <th scope="col">MAC Address</th>
             <th scope="col"></th>
           </tr>

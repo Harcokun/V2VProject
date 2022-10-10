@@ -18,11 +18,11 @@ const Car: NextPage = () => {
       // setCarsList(carsInfo);
       setSelectedCarInfo({
         ...selectedCarInfo,
-        name: "car test 1",
-        mac: "12345",
-        speed: 5,
-        block: 1,
-        index: 1,
+        model: "car test 1",
+        MacId: "12345",
+        velocity: 5,
+        piece: 33,
+        location: 0,
         clockwise: true,
       });
     };

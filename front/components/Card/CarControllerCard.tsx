@@ -42,8 +42,8 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
     setFetched(true);
   };
 
-  const handleSpeedChange = async (speed: number) => {
-    const response = await carService.changeSpeed(selectedCarInfo._id, speed);
+  const handleSpeedChange = async (velocity: number) => {
+    const response = await carService.changecelocity(selectedCarInfo._id, velocity);
   };
 
   const handleDirectionChange = async (dir: string) => {
@@ -72,7 +72,7 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
 
   if (isFetched) {
     return (
-      <Card heading={selectedCarInfo.name + " Controller"}>
+      <Card heading={selectedCarInfo.model + " Controller"}>
         <div className="text-center">
           <Image
             className="flex justify-center items-center"
@@ -88,7 +88,7 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
               <tr className="py-2">
                 <td className="text-left">Current Speed</td>
                 <td className="text-right text-emerald-600 text-xl">
-                  {selectedCarInfo.speed} mm/s, Level {speedLevel}
+                  {selectedCarInfo.velocity} mm/s, Level {speedLevel}
                 </td>
               </tr>
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
@@ -137,7 +137,7 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
                 <td className="text-left">Location</td>
                 <td className="text-right text-amber-500 text-xl">
-                  Block {selectedCarInfo.block}, Index {selectedCarInfo.index}
+                  Piece {selectedCarInfo.piece}, Index {selectedCarInfo.location}
                 </td>
               </tr>
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
@@ -190,7 +190,7 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
     );
   }
   return (
-    <Card heading={"No Car Data"}>
+    <Card heading={"Car Controller"}>
       <div className="text-center">
         <Image
           className="flex justify-center items-center"

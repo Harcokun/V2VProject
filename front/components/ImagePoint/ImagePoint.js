@@ -4,8 +4,8 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useState } from "react";
 // import dynamic from "next/dynamic";
 
-import mapImage from "../../public/images/map.png";
-import { lookUpCoordinatation } from "../../utils/constants";
+import mapImage from "../../public/images/mapWithoutIndex.png";
+import { lookUpCoordination } from "../../utils/constants";
 
 import Images from "./Images";
 // import Image from "next/image";
@@ -35,6 +35,8 @@ class ImagePoint extends Component {
       showModal: false,
       deleteCircleList: [],
       imageClickCoordList: [],
+      prevPiece: {},
+      piece17Pos: {},
     };
 
     this.confirmDelete = this.confirmDelete.bind(this);
@@ -47,6 +49,14 @@ class ImagePoint extends Component {
     if (jsonImageClickCoordList) {
       console.log(jsonImageClickCoordList);
       this.circleListAfterDeleteReload(jsonImageClickCoordList);
+    }
+    let jsonPrevPiece = JSON.parse(localStorage.getItem("prevPiece"));
+    if (jsonPrevPiece) {
+      this.setState({ prevPiece: { ...jsonPrevPiece } });
+    }
+    let jsonPiece17Pos = JSON.parse(localStorage.getItem("piece17Pos"));
+    if (jsonPiece17Pos) {
+      this.setState({ piece17Pos: { ...jsonPiece17Pos } });
     }
   }
 
@@ -113,7 +123,7 @@ class ImagePoint extends Component {
     );
   };
 
-  createPoint = (x, y) => {
+  createPoint = (x, y, car) => {
     this.setState(
       {
         imageClickCoordList: [...this.state.imageClickCoordList, { x, y }],
@@ -125,7 +135,7 @@ class ImagePoint extends Component {
             circleList: [
               ...this.state.circleList,
               <Label
-                id={this.state.imageClickCoordList.length}
+                id={car._id}
                 x={x}
                 y={y}
                 draggable
@@ -133,11 +143,7 @@ class ImagePoint extends Component {
                 onDragEnd={this.handleDragLabelCoordination}
               >
                 <Circle width={25} height={25} fill="red" shadowBlur={5} />
-                <Text
-                  text={this.state.imageClickCoordList.length}
-                  offsetX={3}
-                  offsetY={3}
-                />
+                <Text text={car._id} offsetX={3} offsetY={3} />
               </Label>,
             ],
           },
@@ -150,11 +156,102 @@ class ImagePoint extends Component {
         );
       }
     );
-  }
+  };
+
+  getPointFromData = async (carsList) => {
+    this.setState(
+      {
+        circleList: [],
+        imageClickCoordList: [],
+      },
+      () => {
+        localStorage.setItem("imageClickCoordList", JSON.stringify([]));
+        this.circleListAfterDeleteReload(this.state.imageClickCoordList);
+      }
+    );
+    for (let i = 0; i < carsList.length; i++) {
+      if (!(carsList[i]._id in this.state.prevPiece)) {
+        this.setState({
+          prevPiece: {
+            ...this.state.prevPiece,
+            [carsList[i]._id]: [
+              carsList[i].piece,
+              this.state.piece17Pos[carsList[i]._id],
+            ],
+          },
+        });
+      }
+      if (carsList[i].piece != 17) {
+        console.log(`Reach ${carsList[i].model}`);
+        let { x, y } = await lookUpCoordination[carsList[i].piece][carsList[i].location];
+        this.createPoint(x, y, carsList[i]);
+      } else {
+        console.log(`carsList[i]._id: ${carsList[i]._id}`);
+        console.log(this.state.prevPiece);
+        if (
+          (this.state.prevPiece[carsList[i]._id][0] == 20 &&
+            carsList[i].clockwise == false) ||
+          (this.state.prevPiece[carsList[i]._id][0] == 36 &&
+            carsList[i].clockwise == true)
+        ) {
+          this.setState(
+            {
+              piece17Pos: { ...this.state.piece17Pos, [carsList[i]._id]: "l" },
+            },
+            async () => {
+              let { x, y } = await lookUpCoordination[carsList[i].piece][this.state.piece17Pos[carsList[i]._id]][carsList[i].location];
+              this.createPoint(x, y, carsList[i]);
+            }
+          );
+        }
+        if (
+          (this.state.prevPiece[carsList[i]._id][0] == 36 &&
+            carsList[i].clockwise == false) ||
+          (this.state.prevPiece[carsList[i]._id][0] == 18 &&
+            carsList[i].clockwise == true)
+        ) {
+          this.setState(
+            {
+              piece17Pos: { ...this.state.piece17Pos, [carsList[i]._id]: "r" },
+            },
+            async () => {
+              let { x, y } = await lookUpCoordination[carsList[i].piece][this.state.piece17Pos[carsList[i]._id]][carsList[i].location];
+              this.createPoint(x, y, carsList[i]);
+            }
+          );
+        } else {
+          console.log(this.state.piece17Pos[carsList[i]._id]);
+          let { x, y } = await lookUpCoordination[carsList[i].piece][this.state.piece17Pos[carsList[i]._id]][carsList[i].location];
+          this.createPoint(x, y, carsList[i]);
+        }
+      }
+      if (this.state.prevPiece[carsList[i]._id][0] != carsList[i].piece) {
+        this.setState(
+          {
+            prevPiece: {
+              ...this.state.prevPiece,
+              [carsList[i]._id]: [carsList[i].piece, this.state.piece17Pos[carsList[i]._id]],
+            },
+          },
+          () => {
+            localStorage.setItem(
+              "prevPiece",
+              JSON.stringify({ ...this.state.prevPiece })
+            );
+            localStorage.setItem(
+              "piece17Pos",
+              JSON.stringify({ ...this.state.piece17Pos })
+            );
+          }
+        );
+      }
+    }
+  };
 
   handleClickImage = (e) => {
-    let { x, y } = this.calculateCoordination(e);
-    this.createPoint(x, y); // do stuff
+    // let { x, y } = this.calculateCoordination(e);
+    // this.createPoint(x, y); // do stuff
+    this.getPointFromData(this.props.carsList);
   };
 
   handleClickLabel = (e) => {
@@ -274,7 +371,7 @@ class ImagePoint extends Component {
 
   render() {
     let { stageWidth, stageHeight } = this.state;
-    console.log(this.state.image);
+    // console.log(this.state.image);
 
     stageWidth = window.innerWidth;
     stageHeight = window.innerHeight * 0.5;

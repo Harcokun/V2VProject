@@ -1,4 +1,4 @@
-export const lookUpCoordinatation = {
+export const lookUpCoordination = {
   17: {
     "l": {
       0: { x: 137.8, y: 197 },
@@ -83,31 +83,31 @@ export const lookUpCoordinatation = {
 
 export const defaultCarInfo = {
   _id: "",
-  name: "",
-  mac: "",
-  speed: 0,
-  block: -1,
-  index: -1,
+  model: "",
+  MacId: "",
+  velocity: 0,
+  piece: -1,
+  location: -1,
   clockwise: true,
 }
 
 export const defaultCarsList = [
   {
     _id: "1",
-    name: "car test 1",
-    mac: "12345",
-    speed: 10,
-    block: 33,
-    index: 0,
+    model: "car test 1",
+    MacId: "12345",
+    velocity: 10,
+    piece: 17,
+    location: 10,
     clockwise: true,
   },
   {
     _id: "2",
-    name: "car test 2",
-    mac: "67890",
-    speed: 5,
-    block: 18,
-    index: 21,
+    model: "car test 2",
+    MacId: "67890",
+    velocity: 5,
+    piece: 17,
+    location: 0,
     clockwise: false,
   },
 ];

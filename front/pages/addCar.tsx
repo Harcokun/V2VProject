@@ -33,13 +33,13 @@ const AddCar: NextPage = () => {
   const { authService, carService } = useContainer();
   const router = useRouter();
   const [values, setValues] = useState({
-    name: "",
-    mac: "",
+    model: "",
+    MacId: "",
   });
 
   const [errors, setErrors] = useState({
-    name: "",
-    mac: "",
+    model: "",
+    MacId: "",
   });
 
   const [showSuccessPopup, setSuccessPopup] = useState(false);
@@ -85,45 +85,45 @@ const AddCar: NextPage = () => {
               onSubmit={handleSubmit}
             >
               <div className="flex flex-row w-full px-3 -mx-3 mt-6 ">
-                <p className="mx-10 mt-1">Name</p>
+                <p className="mx-10 mt-1">Model</p>
                 <input
                   className={
-                    errors["name"]
+                    errors["model"]
                       ? `${styles.input} ${styles.inputError}`
                       : `${styles.input} `
                   }
-                  id="grid-name"
-                  name="name"
-                  type="name"
-                  placeholder="Car Name"
-                  value={values.name}
+                  id="grid-model"
+                  name="model"
+                  type="model"
+                  placeholder="Car Model"
+                  value={values.model}
                   onChange={onChange}
                 />
-                <p className="text-alert mt-1">{errors.name}</p>
+                <p className="text-alert mt-1">{errors.model}</p>
               </div>
               <div className="flex flex-row w-full px-3 -mx-3 my-6 ">
                 <p className="ml-10 mr-12 mt-1">MAC</p>
                 <input
                   className={
-                    errors["mac"]
+                    errors["MacId"]
                       ? `${styles.input} ${styles.inputError}`
                       : `${styles.input} `
                   }
-                  id="grid-mac"
-                  name="mac"
-                  type="mac"
+                  id="grid-MacId"
+                  name="MacId"
+                  type="MacId"
                   placeholder="MAC Address"
-                  value={values.mac}
+                  value={values.MacId}
                   onChange={onChange}
                 />
-                <p className="text-alert mt-1">{errors.name}</p>
+                <p className="text-alert mt-1">{errors.MacId}</p>
               </div>
               <div className="flex flex-row gap-12">
                 <Button
                   text="ADD CAR"
                   colorStyle={AddCarButtonStyle}
                   margin={[24, 0, 0, 0]}
-                  disabled={values.name == "" || values.mac == ""}
+                  disabled={values.model == "" || values.MacId == ""}
                 />
                 <Button
                   text="CANCEL"

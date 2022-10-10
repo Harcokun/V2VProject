@@ -16,10 +16,10 @@ const ActiveCarCard: React.FC<ActiveCarCardProps> = ({ heading, carsList }) => {
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Car Name</th>
+            <th scope="col">Car Model</th>
             <th scope="col">MAC Address</th>
             <th scope="col">Current Speed</th>
-            <th scope="col">Current Block</th>
+            <th scope="col">Current Piece</th>
             <th scope="col">Current Index</th>
           </tr>
         </thead>
@@ -28,11 +28,11 @@ const ActiveCarCard: React.FC<ActiveCarCardProps> = ({ heading, carsList }) => {
             return (
               <tr key={i}>
                 <th scope="row">{i + 1}</th>
-                <td>{car.name}</td>
-                <td>{car.mac}</td>
-                <td>{car.speed}</td>
-                <td>{car.block}</td>
-                <td>{car.index}</td>
+                <td>{car.model}</td>
+                <td>{car.MacId}</td>
+                <td>{car.velocity}</td>
+                <td>{car.piece}</td>
+                <td>{car.location}</td>
               </tr>
             );
           })}

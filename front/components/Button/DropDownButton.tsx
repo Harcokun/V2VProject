@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import CarInfo from "../../utils/types";
 
 interface DropDownProps {
@@ -54,7 +54,7 @@ const DropDownButton: React.FC<DropDownProps> = ({
         onClick={toggleList}
       >
         <p className="truncate text-base">
-          {selectedCar ? selectedCar.name : <p>Select a car</p>}
+          {selectedCar ? selectedCar.model : "Select a car"}
         </p>
         <div>
           <svg
@@ -104,7 +104,7 @@ const DropDownButton: React.FC<DropDownProps> = ({
                 truncate"
                 onClick={() => selectCar(car)}
               >
-                {car.name}
+                {car.model}
               </li>
             ))}
           </ul>
