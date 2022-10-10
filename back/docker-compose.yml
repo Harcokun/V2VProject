@@ -1,25 +1,6 @@
 version: "3"
 
 services:
-  # backend:
-  #   build: .
-  #   ports:
-  #     - "4000:4000"
-  mariadb: 
-    image: mariadb:latest
-    container_name: mariadb
-    ports:
-      - 3306:3306
-    volumes:
-      - ~/apps/mariadb:/var/lib/sql
-      - ./schema:/docker-entrypoint-initdb.d
-    env_file:
-      - .env
-    environment:
-      MARIADB_ROOT_PASSWORD: ${DOCKER_MARIADB_ROOT_PASSWORD}
-      MARIADB_DATABASE: ${DOCKER_MARIADB_DATABASE}
-      MARIADB_USER: ${DOCKER_MARIADB_USER}
-      MARIADB_PASSWORD: ${DOCKER_MARIADB_PASSWORD}
   influxdb:
     image: influxdb:2.1.1
     container_name: influxdb2

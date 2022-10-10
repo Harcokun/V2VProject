@@ -1,18 +1,10 @@
-// import mariadb from 'mariadb';
-// import dotenv from 'dotenv';
+import mongoose from "mongoose";
 
-// dotenv.config({
-//     path: './config/config.env'
-// })
+const uri: string = "mongodb+srv://adhoc:adhoc@wireless.iqywro9.mongodb.net/?retryWrites=true&w=majority";
 
-// console.log(process.env.DB_PASSWORD)
+const connectDB = async () => {
+  const conn = await mongoose.connect(uri)
+  console.log(`⚡️[database]: Mongo connected: ${conn.connection.host}`);
+}
 
-// const pool = mariadb.createPool({
-//     host: "127.0.0.1",
-//     port: 3306,
-//     user: `${process.env.DB_USER}`,
-//     password: `${process.env.DB_PASSWORD}`,
-//     database: `${process.env.DB_DATABASE}`
-// })
-
-// export { pool }; 
+export { connectDB };

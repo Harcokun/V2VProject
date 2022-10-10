@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import routes from './routes';
 import bodyParser from 'body-parser';
+import { connectDB } from './config/db';
 
 dotenv.config({
     path: "./config/config.env"
@@ -19,4 +20,5 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
   routes(app);
+  connectDB();
 });

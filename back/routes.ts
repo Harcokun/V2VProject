@@ -1,8 +1,9 @@
 import { Express, Request, Response } from "express";
 import { queryData } from "./services/influxDB/read_data";
 import { writeDataToInflux } from "./services/influxDB/write_data";
-import { getCarInfo } from "./services/mariaDB/car.services";
-import Mqtt  from './services/mqtt/mqtt.services';
+import Mqtt from './services/mqtt/mqtt.services';
+import { Accident } from './models/accident.models'
+import { Car } from './models/car.models'
 
 declare global {
     var speed: number; 
@@ -21,13 +22,6 @@ export default function (app: Express) {
     app.post('/postLocation', (req: Request, res: Response) => {
         res.send(writeDataToInflux(req.body));
     })
-
-    // app.get('/carInfo', async (req: Request, res: Response) => {
-    //     const car_registration = req.body.car_registration; 
-    //     res.status(200).json({
-    //         data: getCarInfo(car_registration)
-    //     });
-    // })
 
     app.get('/mqtt', async (req: Request, res: Response) => {
         try {
@@ -48,16 +42,23 @@ export default function (app: Express) {
         }
     })
 
-    app.get('/speedUp', (res: Response) => {
+    app.get('/speedUp', async (req: Request, res: Response) => {
         try {
+            let isSpeedUp: boolean = false; 
             if (speed <= 1000 && speed + 250 <= 1000) {
                 let msg = `{"cmd": "forward", "speed": ${speed + 250}, "acc": 1000}`;
                 Mqtt.publish('@msg/connect', msg);
-                res.status(200).json({
-                    success: true, 
-                    speed: speed
-                })
+                speed += 250; 
+                console.log(`⚡️[mqtt]: Speed: ${speed}`);
+                isSpeedUp = true; 
             }
+            else {
+                isSpeedUp = false;
+            }
+            res.status(200).json({
+                success: isSpeedUp,
+                speed: speed
+            })
         } catch (err) {
             console.log(err);
             res.status(400).json({
@@ -66,16 +67,22 @@ export default function (app: Express) {
         }
     })
 
-    app.get('/speedDown', (res: Response) => {
+    app.get('/speedDown', async (req: Request, res: Response) => {
         try {
+            let isSpeedDown: boolean = false; 
             if (speed >= 0 && speed - 250 >= 0) {
                 let msg = `{"cmd": "backward", "speed": ${speed - 250}, "acc": 1000}`;
                 Mqtt.publish('@msg/connect', msg);
-                res.status(200).json({
-                    success: true, 
-                    speed: speed
-                })
+                speed -= 250; 
+                console.log(`⚡️[mqtt]: Speed: ${speed}`);
+                isSpeedDown = true; 
+            } else {
+                isSpeedDown = false; 
             }
+            res.status(200).json({
+                success: isSpeedDown, 
+                speed: speed
+            })
         }catch (err) {
             console.log(err);
             res.status(400).json({
@@ -84,10 +91,29 @@ export default function (app: Express) {
         }
     })
 
-    app.get('/turnLeft', (res: Response) => {
+    app.get('/turnLeft', async (req: Request, res: Response) => {
         try {
             let msg = `{"cmd": "left", "speed": ${speed}, "acc": 1000}`;
             Mqtt.publish('@msg/connect', msg);
+            console.log(`⚡️[mqtt]: Turn: left`);
+            res.status(200).json({
+                success: true, 
+                speed: speed, 
+                turn: "left"
+            })
+        }catch (err) {
+            console.log(err);
+            res.status(400).json({
+                success: false
+            })
+        }
+    })
+
+    app.get('/turnRight', async (req: Request, res: Response) => {
+        try {
+            let msg = `{"cmd": "right", "speed": ${speed}, "acc": 1000}`;
+            Mqtt.publish('@msg/connect', msg);
+            console.log(`⚡️[mqtt]: Turn: right`);
             res.status(200).json({
                 success: true, 
                 speed: speed
@@ -100,18 +126,61 @@ export default function (app: Express) {
         }
     })
 
-    app.get('/turnRight', (res: Response) => {
+    app.get('/Car/info/:id', async (req: Request, res: Response) => {
         try {
-            let msg = `{"cmd": "right", "speed": ${speed}, "acc": 1000}`;
-            Mqtt.publish('@msg/connect', msg);
+            const car_registration = req.params.id;
+            const data = await Car.findOne({ 'car_registration': car_registration })
             res.status(200).json({
                 success: true, 
-                speed: speed
+                data: data
             })
-        }catch (err) {
+        } catch (err) {
             console.log(err);
             res.status(400).json({
-                success: false
+                success: false,
+                error: err
+            })
+        }
+    })
+
+    app.post('/Car', async (req: Request, res: Response) => {
+        try {
+            const car = req.body; 
+            const data = await Car.create(car); 
+            res.status(200).json({
+                success: true, 
+                data: data
+            })
+        } catch (err) {
+            console.log(err);
+            res.status(400).json({
+                success: false, 
+                err: err
+            })
+        }
+    })
+
+    app.delete('/Car/:id', async (req: Request, res: Response) => {
+        try {
+            const car_registration = req.params.id; 
+            const car = await Car.findOne({ car_registration: car_registration });
+
+            if (!car) {
+                res.status(404).json({
+                    success: false, 
+                    msg: 'not found'
+                })
+            }
+            await car?.remove(); 
+            res.status(200).json({
+                success: true, 
+                data: car
+            })
+        } catch (err) {
+            console.log(err);
+            res.status(400).json({
+                success: false,
+                err: err
             })
         }
     })

@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const routes_1 = __importDefault(require("./routes"));
 const body_parser_1 = __importDefault(require("body-parser"));
+const db_1 = require("./config/db");
 dotenv_1.default.config({
     path: "./config/config.env"
 });
@@ -20,4 +21,5 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
     (0, routes_1.default)(app);
+    (0, db_1.connectDB)();
 });

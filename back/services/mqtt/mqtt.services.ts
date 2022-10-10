@@ -16,7 +16,7 @@ const mqtt_obj = mqtt.connect({
 })
 
 mqtt_obj.on('connect', () => {
-    console.log('MQTT connect!');
+    console.log('⚡️[mqtt]: MQTT connect!');
     mqtt_obj.subscribe(MQTT_TOPIC, (err: Error) => {
         if (err) {
             console.log(`[ERROR]: ${err}`);
