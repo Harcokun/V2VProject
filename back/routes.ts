@@ -145,12 +145,43 @@ export default function (app: Express) {
 
     app.post('/Car', async (req: Request, res: Response) => {
         try {
-            const car = req.body; 
-            const data = await Car.create(car); 
-            res.status(200).json({
-                success: true, 
-                data: data
-            })
+            const car = req.body;
+            const MAC_ID = car.MacId; 
+            let deviceId: string; 
+            if (MAC_ID == "ED:9A:B3:A0:20:74") {
+                deviceId = "1e30fad7-ccc5-4523-85ad-1dfe966c3c29"
+                const car_object = {
+                    MacId: MAC_ID, 
+                    DeviceID: deviceId,
+                    Model: car.Model,
+                }
+                const data = await Car.create(car_object); 
+                console.log(`⚡️[database]: Save to database with DeviceId: ${deviceId}`);
+                res.status(200).json({
+                    success: true, 
+                    data: data
+                })
+            } else if (MAC_ID == "D6:93:EB:A8:C1:5D") {
+                deviceId = "a6b15e5b-4cd3-4e22-b7cf-2ae8d2872cda"
+                const car_object = {
+                    MacId: MAC_ID, 
+                    DeviceID: deviceId,
+                    Model: car.Model,
+                }
+                const data = await Car.create(car_object); 
+                console.log(`⚡️[database]: Save to database with DeviceId: ${deviceId}`);
+                res.status(200).json({
+                    success: true, 
+                    data: data
+                })
+            } else {
+                const data = await Car.create(car);
+                console.log(`⚡️[database]: Save to database with DeviceId: ${data.DeviceId}`);
+                res.status(200).json({
+                    success: true, 
+                    data: data
+                })
+            }
         } catch (err) {
             console.log(err);
             res.status(400).json({
@@ -181,6 +212,26 @@ export default function (app: Express) {
             res.status(400).json({
                 success: false,
                 err: err
+            })
+        }
+    })
+
+    app.post('/Car/status', async (req: Request, res: Response) => {
+        try {
+            let body = req.body;
+            body = body.replace('\\', "")
+            const body_json = JSON.parse(body);
+            const deviceId = body_json.Device;
+            const status = body_json.Status; 
+            const car = await Car.findOneAndUpdate({ DeviceId: deviceId }, { Status: status });
+            res.status(200).json({
+                success: true, 
+                car: car
+            })            
+        } catch (err) {
+            console.log(err);
+            res.status(400).json({
+                success: false
             })
         }
     })

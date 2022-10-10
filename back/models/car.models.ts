@@ -1,15 +1,37 @@
 import mongoose from 'mongoose'
 
+function makeid(length: Number): string{
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 const carSchema = new mongoose.Schema({
-    car_registration: {
+    MacId: {
         type: String, 
         required: true
-    }, 
-    model: {
+    },
+    DeviceId: {
+        type: String, 
+        require: true,
+        default: makeid(8) + "-" + makeid(4) + "-" + makeid(4) + "-" + makeid(4) + "-" + makeid(12)
+    },
+    Model: {
         type: String,
         required: true
     },
-    color: String
+    Color: {
+        type: String,
+        default: "red"
+    },
+    Status: {
+        type: String,
+        default: "offline"
+    }
 })
 
 const Car = mongoose.model('Car', carSchema);
