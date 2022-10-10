@@ -218,13 +218,17 @@ export default function (app: Express) {
 
     app.post('/Car/status', async (req: Request, res: Response) => {
         try {
-            let body = req.body;
-            console.log(`Request: ${req}`);
-            body = body.replace('\\', "")
-            const body_json = JSON.parse(body);
+            let body = req.body.body;
+            console.log(`Request: ${body}`);
+            body = body.slice(11, -1);
+            // console.log(`Request sub: ${body}`);
+            body = cutBackSlash(body);
+            // console.log(`Request sub 2: ${body}`);
+            body = JSON.parse(body);
+            console.log(body)
             // console.log(body_json);
-            const deviceId = body_json.Device;
-            const status = body_json.Status; 
+            const deviceId = body.Device;
+            const status = body.Status; 
             // console.log(status);
             const car = await Car.findOneAndUpdate({ DeviceId: deviceId }, { Status: status }, {
                 new: true
@@ -253,7 +257,7 @@ export default function (app: Express) {
             console.log(`⚡️[database]: Car ${car.MacId}'s status is set to ${car.Status}`);
             return res.status(200).json({
                 success: true, 
-                car: car
+                // car: car
             })            
         } catch (err) {
             console.log(err);
@@ -262,4 +266,13 @@ export default function (app: Express) {
             })
         }
     })
+}
+
+function cutBackSlash(str: string) { 
+    var index=str.indexOf("\\");
+    while(index >= 0){
+        str=str.replace("\\","");
+        index=str.indexOf("\\");
+    }
+    return str;
 }
