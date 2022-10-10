@@ -1,4 +1,4 @@
-import { Express, Request, Response } from "express";
+import e, { Express, Request, Response } from "express";
 import { queryData } from "./services/influxDB/read_data";
 import { writeDataToInflux } from "./services/influxDB/write_data";
 import Mqtt from './services/mqtt/mqtt.services';
@@ -14,13 +14,13 @@ export default function (app: Express) {
     app.get('/getLocation', async (req: Request, res: Response) => {
         const data = await queryData('1');
         // console.log(data);
-        res.status(200).json({
+        return res.status(200).json({
             data: data
         });
     })
 
     app.post('/postLocation', (req: Request, res: Response) => {
-        res.send(writeDataToInflux(req.body));
+        return res.send(writeDataToInflux(req.body));
     })
 
     app.get('/mqtt', async (req: Request, res: Response) => {
@@ -30,13 +30,13 @@ export default function (app: Express) {
             console.log(msg);
             
             Mqtt.publish("@msg/connect", msg)
-            res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 data: msg
             })
         } catch (err) {
             console.log(err);
-            res.status(400).json({
+            return res.status(400).json({
                 success: false
             })
         }
@@ -55,13 +55,13 @@ export default function (app: Express) {
             else {
                 isSpeedUp = false;
             }
-            res.status(200).json({
+            return res.status(200).json({
                 success: isSpeedUp,
                 speed: speed
             })
         } catch (err) {
             console.log(err);
-            res.status(400).json({
+            return res.status(400).json({
                 success: false
             })
         }
@@ -79,13 +79,13 @@ export default function (app: Express) {
             } else {
                 isSpeedDown = false; 
             }
-            res.status(200).json({
+            return res.status(200).json({
                 success: isSpeedDown, 
                 speed: speed
             })
         }catch (err) {
             console.log(err);
-            res.status(400).json({
+            return res.status(400).json({
                 success: false
             })
         }
@@ -96,14 +96,14 @@ export default function (app: Express) {
             let msg = `{"cmd": "left", "speed": ${speed}, "acc": 1000}`;
             Mqtt.publish('@msg/connect', msg);
             console.log(`⚡️[mqtt]: Turn: left`);
-            res.status(200).json({
+            return res.status(200).json({
                 success: true, 
                 speed: speed, 
                 turn: "left"
             })
         }catch (err) {
             console.log(err);
-            res.status(400).json({
+            return res.status(400).json({
                 success: false
             })
         }
@@ -114,13 +114,13 @@ export default function (app: Express) {
             let msg = `{"cmd": "right", "speed": ${speed}, "acc": 1000}`;
             Mqtt.publish('@msg/connect', msg);
             console.log(`⚡️[mqtt]: Turn: right`);
-            res.status(200).json({
+            return res.status(200).json({
                 success: true, 
                 speed: speed
             })
         }catch (err) {
             console.log(err);
-            res.status(400).json({
+            return res.status(400).json({
                 success: false
             })
         }
@@ -130,13 +130,13 @@ export default function (app: Express) {
         try {
             const car_registration = req.params.id;
             const data = await Car.findOne({ 'car_registration': car_registration })
-            res.status(200).json({
+            return res.status(200).json({
                 success: true, 
                 data: data
             })
         } catch (err) {
             console.log(err);
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 error: err
             })
@@ -148,20 +148,20 @@ export default function (app: Express) {
             const car = req.body;
             const MAC_ID = car.MacId; 
             let deviceId: string; 
-            if (MAC_ID == "ED:9A:B3:A0:20:74") {
+            if (MAC_ID === "ED:9A:B3:A0:20:74") {
                 deviceId = "1e30fad7-ccc5-4523-85ad-1dfe966c3c29"
                 const car_object = {
                     MacId: MAC_ID, 
-                    DeviceID: deviceId,
+                    DeviceId: deviceId,
                     Model: car.Model,
                 }
-                const data = await Car.create(car_object); 
+                const data = await Car.create(car_object);
                 console.log(`⚡️[database]: Save to database with DeviceId: ${deviceId}`);
-                res.status(200).json({
+                return res.status(200).json({
                     success: true, 
                     data: data
                 })
-            } else if (MAC_ID == "D6:93:EB:A8:C1:5D") {
+            } else if (MAC_ID === "D6:93:EB:A8:C1:5D") {
                 deviceId = "a6b15e5b-4cd3-4e22-b7cf-2ae8d2872cda"
                 const car_object = {
                     MacId: MAC_ID, 
@@ -170,21 +170,21 @@ export default function (app: Express) {
                 }
                 const data = await Car.create(car_object); 
                 console.log(`⚡️[database]: Save to database with DeviceId: ${deviceId}`);
-                res.status(200).json({
+                return res.status(200).json({
                     success: true, 
                     data: data
                 })
             } else {
                 const data = await Car.create(car);
                 console.log(`⚡️[database]: Save to database with DeviceId: ${data.DeviceId}`);
-                res.status(200).json({
+                return res.status(200).json({
                     success: true, 
                     data: data
                 })
             }
         } catch (err) {
             console.log(err);
-            res.status(400).json({
+            return res.status(400).json({
                 success: false, 
                 err: err
             })
@@ -193,23 +193,23 @@ export default function (app: Express) {
 
     app.delete('/Car/:id', async (req: Request, res: Response) => {
         try {
-            const car_registration = req.params.id; 
-            const car = await Car.findOne({ car_registration: car_registration });
+            const macId = req.params.id; 
+            const car = await Car.findOne({ MacId: macId });
 
             if (!car) {
-                res.status(404).json({
+                return res.status(404).json({
                     success: false, 
                     msg: 'not found'
                 })
             }
             await car?.remove(); 
-            res.status(200).json({
+            return res.status(200).json({
                 success: true, 
                 data: car
             })
         } catch (err) {
             console.log(err);
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 err: err
             })
@@ -219,18 +219,45 @@ export default function (app: Express) {
     app.post('/Car/status', async (req: Request, res: Response) => {
         try {
             let body = req.body;
+            console.log(`Request: ${req}`);
             body = body.replace('\\', "")
             const body_json = JSON.parse(body);
+            // console.log(body_json);
             const deviceId = body_json.Device;
             const status = body_json.Status; 
-            const car = await Car.findOneAndUpdate({ DeviceId: deviceId }, { Status: status });
-            res.status(200).json({
+            // console.log(status);
+            const car = await Car.findOneAndUpdate({ DeviceId: deviceId }, { Status: status }, {
+                new: true
+            });
+            if (!car) {
+                // console.log("no car");
+                let macId = "D6:93:EB:A8:C1:5D"; 
+                if (deviceId === "1e30fad7-ccc5-4523-85ad-1dfe966c3c29") {
+                    macId = "ED:9A:B3:A0:20:74"
+                } else if (deviceId === "a6b15e5b-4cd3-4e22-b7cf-2ae8d2872cda") {
+                    macId = "D6:93:EB:A8:C1:5D"
+                }
+                const car_obj = {
+                    MacId: macId, 
+                    DeviceId: deviceId,
+                    Status: status
+                }
+                // console.log(car_obj);
+                const data = await Car.create(car_obj)
+                console.log(`⚡️[database]: Car ${data.MacId}'s status is set to ${data.Status}`);
+                return res.status(200).json({
+                    success: true, 
+                    car: data
+                })
+            }
+            console.log(`⚡️[database]: Car ${car.MacId}'s status is set to ${car.Status}`);
+            return res.status(200).json({
                 success: true, 
                 car: car
             })            
         } catch (err) {
             console.log(err);
-            res.status(400).json({
+            return res.status(400).json({
                 success: false
             })
         }

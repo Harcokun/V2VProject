@@ -8,7 +8,7 @@ export async function writeDataToInflux(data: string | any) {
     if (typeof data === "string") {
         const d = JSON.parse(data);
         // console.log(d.Device);
-        console.log(d);
+        // console.log(d);
         console.log('*** WRITE POINTS ***')
     
         const point = new Point('metrics')

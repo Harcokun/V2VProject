@@ -22,7 +22,8 @@ const carSchema = new mongoose.Schema({
     },
     Model: {
         type: String,
-        required: true
+        required: true,
+        default: "car"
     },
     Color: {
         type: String,
