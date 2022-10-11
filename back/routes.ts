@@ -11,7 +11,7 @@ globalThis.speed = 0;
 
 export default function (app: Express) {
     app.get('/getLocation', async (req: Request, res: Response) => {
-        const data = await queryData('1');
+        const data = await queryData();
         // console.log(data);
         return res.status(200).json({
             data: data

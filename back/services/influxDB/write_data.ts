@@ -19,6 +19,7 @@ export async function writeDataToInflux(data: string | any) {
         .floatField('speed', d.Speed)
     writeAPI.writePoint(point)
     writeAPI.flush(true)
+    console.log(`⚡️[influxdb]: Data has been flushed`);
     writeAPI
     .close()
     .then(() => console.log('Write FINISHED'))

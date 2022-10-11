@@ -1,7 +1,7 @@
 import { InfluxDB } from '@influxdata/influxdb-client';
 import { url, token, org } from '../../env'
 
-export async function queryData(car_id: string) {
+export async function queryData() {
     const queryApi = new InfluxDB({ url, token }).getQueryApi(org);
     const fluxQuery = 'from(bucket:"car_info") |> range(start: -1d) |> filter(fn: (r) => r._measurement == "metrics")';
 
@@ -60,7 +60,7 @@ export async function queryData(car_id: string) {
             map2[index] = jsonObj; 
         }
         console.log('\nCollect ROWS SUCCESS')
-        return map2[car_id]; 
+        return map2; 
     } catch (e) {
         console.error(e)
         console.log('\nCollect ROWS ERROR')

@@ -8,6 +8,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const routes_1 = __importDefault(require("./routes"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const db_1 = require("./config/db");
+const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config({
     path: "./config/config.env"
 });
@@ -15,6 +16,10 @@ const app = (0, express_1.default)();
 const port = process.env.PORT;
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: false }));
+app.use((0, cors_1.default)({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+}));
 app.get('/', (req, res) => {
     res.send('Express + TypeScript Server');
 });
