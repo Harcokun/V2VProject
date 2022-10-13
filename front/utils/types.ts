@@ -1,9 +1,20 @@
-export default interface CarInfo {
+export interface CarInfo {
     _id: string;
-    model: string;
+    Model: string;
+    Color: string;
     MacId: string;
-    velocity: number;
+    Status: string;
+};
+
+export interface ActiveCarInfo {
+    speed: number;
     piece: number;
     location: number;
     clockwise: boolean;
+    timestamp: EpochTimeStamp
 };
+
+export interface ActiveCarsList {
+    [MacId: string] : {activeCarInfo: ActiveCarInfo};
+};
+

@@ -5,7 +5,10 @@
     LOGOUT = "/api/logout",
     ME = "/api/me",
     // Car
-    CAR = "/api/car",
-    SPEED = "/api/car/speed",
-    DIR = "api/car/dir",
+    CAR = "/Car/info",
+    LOCATION = "/getLocation",
+    SPEEDUP = "/speedUp",
+    SPEEDDOWN = "/speedDown",
+    TURNLEFT = "/turnLeft",
+    TURNRIGHT = "/turnRight",
 }

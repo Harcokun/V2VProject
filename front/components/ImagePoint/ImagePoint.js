@@ -1,7 +1,7 @@
 import React, { Component, createRef } from "react";
 import { Stage, Layer, Group, Circle, Label, Text } from "react-konva";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import dynamic from "next/dynamic";
 
 import mapImage from "../../public/images/mapWithoutIndex.png";
@@ -22,6 +22,8 @@ import Images from "./Images";
 //     .catch((err) => console.log(err));
 // }
 
+const DEFAULT_MACID = "D6:93:EB:A8:C1:5D";
+
 class ImagePoint extends Component {
   constructor(props) {
     super(props);
@@ -37,26 +39,45 @@ class ImagePoint extends Component {
       imageClickCoordList: [],
       prevPiece: {},
       piece17Pos: {},
+      locBuffer: {},
+      getPointFromData: this.getPointFromData,
     };
 
     this.confirmDelete = this.confirmDelete.bind(this);
+    // this.getPointFromData = this.getPointFromData(this.props.carsList);
   }
 
   componentDidMount() {
+    // localStorage.clear();
     let jsonImageClickCoordList = JSON.parse(
       localStorage.getItem("imageClickCoordList")
     );
     if (jsonImageClickCoordList) {
-      console.log(jsonImageClickCoordList);
+      // console.log(jsonImageClickCoordList);
       this.circleListAfterDeleteReload(jsonImageClickCoordList);
     }
+
     let jsonPrevPiece = JSON.parse(localStorage.getItem("prevPiece"));
     if (jsonPrevPiece) {
       this.setState({ prevPiece: { ...jsonPrevPiece } });
     }
+
     let jsonPiece17Pos = JSON.parse(localStorage.getItem("piece17Pos"));
     if (jsonPiece17Pos) {
       this.setState({ piece17Pos: { ...jsonPiece17Pos } });
+    }
+
+    let jsonLocBuffer = JSON.parse(localStorage.getItem("locBuffer"));
+    if (jsonLocBuffer) {
+      this.setState({ locBuffer: { ...jsonLocBuffer } });
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    // console.log(prevProps.activeCarsList !== this.props.activeCarsList);
+    if (prevProps.activeCarsList !== this.props.activeCarsList) {
+      console.log(`Refreshed in ImagePoint!`);
+      this.getPointFromData(this.props.activeCarsList);
     }
   }
 
@@ -123,19 +144,19 @@ class ImagePoint extends Component {
     );
   };
 
-  createPoint = (x, y, car) => {
+  createPoint = async (x, y, macId) => {
     this.setState(
       {
         imageClickCoordList: [...this.state.imageClickCoordList, { x, y }],
       },
       () => {
-        console.log(this.state.imageClickCoordList);
+        let text = (macId == DEFAULT_MACID? "1" : "2");
         this.setState(
           {
             circleList: [
               ...this.state.circleList,
               <Label
-                id={car._id}
+                id={macId}
                 x={x}
                 y={y}
                 draggable
@@ -143,11 +164,16 @@ class ImagePoint extends Component {
                 onDragEnd={this.handleDragLabelCoordination}
               >
                 <Circle width={25} height={25} fill="red" shadowBlur={5} />
-                <Text text={car._id} offsetX={3} offsetY={3} />
+                {/* <Images
+                  img={"/icons/car_icon_red.png"}
+                /> */}
+                <Text text={text} offsetX={3} offsetY={3} />
               </Label>,
             ],
           },
           () => {
+            console.log("MacId, x ,y: ", macId, x, y);
+            console.log("CircleList: ", this.state.circleList);
             localStorage.setItem(
               "imageClickCoordList",
               JSON.stringify([...this.state.imageClickCoordList])
@@ -158,7 +184,44 @@ class ImagePoint extends Component {
     );
   };
 
-  getPointFromData = async (carsList) => {
+  scaleSideLocation = (location) => {
+    if (location <= 0) return 0;
+    if (location >= 1 && location <= 4) return 1;
+    if (location >= 5 && location <= 10) return 10;
+    if (location >= 11 && location <= 14) return 11;
+    if (location >= 15 && location <= 20) return 20;
+    if (location >= 22 && location <= 29) return 22;
+    if (location >= 30 && location <= 35) return 35;
+    if (location >= 37) return 37;
+    return location;
+  };
+
+  scale34Location = (location) => {
+    if (location <= 0) return 0;
+    if (location >= 1 && location <= 4) return 1;
+    if (location >= 5 && location <= 10) return 10;
+    if (location >= 11 && location <= 14) return 11;
+    if (location >= 15 && location <= 20) return 20;
+    if (location >= 21 && location <= 24) return 21;
+    if (location >= 25 && location <= 30) return 30;
+    if (location >= 31) return 31;
+    return location;
+  };
+
+  scale36Location = (location) => {
+    if (location <= 0) return 0;
+    if (location >= 2 && location <= 9) return 2;
+    if (location >= 10 && location <= 15) return 15;
+    if (location >= 17 && location <= 24) return 17;
+    if (location >= 25 && location <= 30) return 30;
+    if (location >= 32 && location <= 38) return 32;
+    if (location >= 39 && location <= 45) return 45;
+    if (location >= 47) return 37;
+    return location;
+  };
+
+  getPointFromData = async (activeCarsList) => {
+    // console.log("activeCarsList in ImagePoint", activeCarsList);
     this.setState(
       {
         circleList: [],
@@ -169,68 +232,98 @@ class ImagePoint extends Component {
         this.circleListAfterDeleteReload(this.state.imageClickCoordList);
       }
     );
-    for (let i = 0; i < carsList.length; i++) {
-      if (!(carsList[i]._id in this.state.prevPiece)) {
+    for (let macId in activeCarsList) {
+      // console.log(`macId: ${macId}`);
+      if (!(macId in this.state.prevPiece)) {
+        // console.log(`carList.macId`);
+      // console.log(activeCarsList[macId]);
         this.setState({
+          piece17Pos: { ...this.state.piece17Pos, [macId]: "l" },
           prevPiece: {
             ...this.state.prevPiece,
-            [carsList[i]._id]: [
-              carsList[i].piece,
-              this.state.piece17Pos[carsList[i]._id],
+            [macId]: [
+              activeCarsList[macId].piece,
+              this.state.piece17Pos[macId]? this.state.piece17Pos[macId] : "l",
             ],
           },
         });
       }
-      if (carsList[i].piece != 17) {
-        console.log(`Reach ${carsList[i].model}`);
-        let { x, y } = await lookUpCoordination[carsList[i].piece][carsList[i].location];
-        this.createPoint(x, y, carsList[i]);
+      // console.log(`this.prevPiece: ${JSON.stringify(this.state.prevPiece)}`)
+      if (activeCarsList[macId].piece != 17) {
+        // console.log(`Reach ${activeCarsList[macId].Model}`);
+        let location;
+        if (activeCarsList[macId].piece == 18 || activeCarsList[macId].piece == 20)
+          location = this.scaleSideLocation(activeCarsList[macId].location);
+        if (activeCarsList[macId].piece == 34)
+          location = this.scale34Location(activeCarsList[macId].location);
+        if (activeCarsList[macId].piece == 36)
+          location = this.scale36Location(activeCarsList[macId].location);
+        // if (activeCarsList[macId].piece == 33) location = activeCarsList[macId].location;
+        else location = activeCarsList[macId].location;
+        // console.log("location: ", location);
+        let { x, y } = await lookUpCoordination[activeCarsList[macId].piece][location];
+        await this.createPoint(x, y, macId);
       } else {
-        console.log(`carsList[i]._id: ${carsList[i]._id}`);
-        console.log(this.state.prevPiece);
-        if (
-          (this.state.prevPiece[carsList[i]._id][0] == 20 &&
-            carsList[i].clockwise == false) ||
-          (this.state.prevPiece[carsList[i]._id][0] == 36 &&
-            carsList[i].clockwise == true)
-        ) {
-          this.setState(
-            {
-              piece17Pos: { ...this.state.piece17Pos, [carsList[i]._id]: "l" },
-            },
-            async () => {
-              let { x, y } = await lookUpCoordination[carsList[i].piece][this.state.piece17Pos[carsList[i]._id]][carsList[i].location];
-              this.createPoint(x, y, carsList[i]);
-            }
-          );
-        }
-        if (
-          (this.state.prevPiece[carsList[i]._id][0] == 36 &&
-            carsList[i].clockwise == false) ||
-          (this.state.prevPiece[carsList[i]._id][0] == 18 &&
-            carsList[i].clockwise == true)
-        ) {
-          this.setState(
-            {
-              piece17Pos: { ...this.state.piece17Pos, [carsList[i]._id]: "r" },
-            },
-            async () => {
-              let { x, y } = await lookUpCoordination[carsList[i].piece][this.state.piece17Pos[carsList[i]._id]][carsList[i].location];
-              this.createPoint(x, y, carsList[i]);
-            }
-          );
-        } else {
-          console.log(this.state.piece17Pos[carsList[i]._id]);
-          let { x, y } = await lookUpCoordination[carsList[i].piece][this.state.piece17Pos[carsList[i]._id]][carsList[i].location];
-          this.createPoint(x, y, carsList[i]);
-        }
+        // console.log(`macId: ${macId}`);
+        // console.log(this.state.prevPiece);
+        let location = this.scaleSideLocation(activeCarsList[macId].location);
+        console.log(`this.state.prevPiece: ${this.state.prevPiece}`);
+          if (
+            (this.state.prevPiece[macId][0] == 20 &&
+              activeCarsList[macId].clockwise == false) ||
+            (this.state.prevPiece[macId][0] == 36 &&
+              activeCarsList[macId].clockwise == true)
+          ) {
+            this.setState(
+              {
+                piece17Pos: { ...this.state.piece17Pos, [macId]: "l" },
+              },
+              async () => {
+                let { x, y } = await lookUpCoordination[activeCarsList[macId].piece][
+                  this.state.piece17Pos[macId]
+                ][location];
+                await this.createPoint(x, y, macId);
+              }
+            );
+          }
+          if (
+            (this.state.prevPiece[macId][0] == 36 &&
+              activeCarsList[macId].clockwise == false) ||
+            (this.state.prevPiece[macId][0] == 18 &&
+              activeCarsList[macId].clockwise == true)
+          ) {
+            this.setState(
+              {
+                piece17Pos: { ...this.state.piece17Pos, [macId]: "r" },
+              },
+              async () => {
+                let { x, y } = await lookUpCoordination[activeCarsList[macId].piece][
+                  this.state.piece17Pos[macId]
+                ][location];
+                await this.createPoint(x, y, macId);
+              }
+            );
+          } else {
+            // console.log(this.state.piece17Pos[macId]);
+            let { x, y } = await lookUpCoordination[activeCarsList[macId].piece][
+              this.state.piece17Pos[macId]
+            ][location];
+            await this.createPoint(x, y, macId);
+          }
+
       }
-      if (this.state.prevPiece[carsList[i]._id][0] != carsList[i].piece) {
+      // console.log(`macId: ${macId}`);
+      // console.log("this.state.prevPiece", this.state.prevPiece);
+      // for (let index in this.state.prevPiece[macId]) {
+        if (this.state.prevPiece[macId][0] != activeCarsList[macId].piece) {
         this.setState(
           {
             prevPiece: {
               ...this.state.prevPiece,
-              [carsList[i]._id]: [carsList[i].piece, this.state.piece17Pos[carsList[i]._id]],
+              [macId]: [
+                activeCarsList[macId].piece,
+                this.state.piece17Pos[macId],
+              ],
             },
           },
           () => {
@@ -244,6 +337,7 @@ class ImagePoint extends Component {
             );
           }
         );
+      // }
       }
     }
   };
@@ -251,12 +345,17 @@ class ImagePoint extends Component {
   handleClickImage = (e) => {
     // let { x, y } = this.calculateCoordination(e);
     // this.createPoint(x, y); // do stuff
-    this.getPointFromData(this.props.carsList);
+    this.getPointFromData(this.props.activeCarsList);
   };
 
+  // handleClick = (e) => {
+  //   this.inputElement.click();
+  //   this.getPointFromData(this.props.activeCarsList);
+  // };
+
   handleClickLabel = (e) => {
-    console.log("click label haha");
-    console.log(e);
+    // console.log("click label haha");
+    // console.log(e);
     // // https://stackoverflow.com/questions/64473531/how-to-obtain-id-of-konva-label-from-konvas-dblclick-event
     // let nodes = e.target.findAncestors('Label', true);
     // if (nodes.length > 0) {
@@ -380,8 +479,10 @@ class ImagePoint extends Component {
     // stageHeight =300;
 
     return (
-      <>
+      <div key={this.props.carsList} onClick={this.handleClick}>
+        {/* <input ref={(input) => (this.inputElement = input)} /> */}
         <Stage
+          key={this.props.carsList}
           style={{ backgroundColor: "rgb(166, 162, 154)", overflow: "hidden" }}
           width={stageWidth}
           height={stageHeight}
@@ -433,7 +534,7 @@ class ImagePoint extends Component {
             </Button>
           </ModalFooter>
         </Modal>
-      </>
+      </div>
     );
   }
 }

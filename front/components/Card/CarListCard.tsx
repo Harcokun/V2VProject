@@ -17,6 +17,8 @@ const CarListCard: React.FC<CarListCardProps> = ({ heading, carsList }) => {
             <th scope="col">#</th>
             <th scope="col">Car Model</th>
             <th scope="col">MAC Address</th>
+            <th scope="col">Color</th>
+            <th scope="col">Current Status</th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -25,8 +27,10 @@ const CarListCard: React.FC<CarListCardProps> = ({ heading, carsList }) => {
             return (
               <tr key={i}>
                 <th scope="row">{i + 1}</th>
-                <td>{car.name}</td>
-                <td>{car.mac}</td>
+                <td>{car.Model}</td>
+                <td>{car.MacId}</td>
+                <td>{car.Color}</td>
+                <td>{car.Status}</td>
                 <td>
                   <button
                     className="

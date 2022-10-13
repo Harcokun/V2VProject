@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
-import CarInfo from "../../utils/types";
 
 interface DropDownProps {
-  carsData: CarInfo[];
+  carsData: Array<any>;
   /**function from the parent to pull back the selected station from this component.*/
-  getCarFromDropDown: (car: CarInfo) => void;
+  getCarFromDropDown: (car: any) => void;
 }
 
 const DropDownButton: React.FC<DropDownProps> = ({
   carsData,
   getCarFromDropDown,
 }) => {
-  const [selectedCar, setSelectedCar] = useState<CarInfo>();
+  const [selectedCar, setSelectedCar] = useState<any>();
 
   /** Necessary for closing the dropdown after choosing a station. */
   const [isListOpen, setListOpen] = useState(false);
@@ -20,7 +19,7 @@ const DropDownButton: React.FC<DropDownProps> = ({
     setListOpen(!isListOpen);
   };
 
-  const selectCar = (car: CarInfo) => {
+  const selectCar = (car: any) => {
     setSelectedCar(car);
     getCarFromDropDown(car);
     setListOpen(false);
@@ -104,7 +103,7 @@ const DropDownButton: React.FC<DropDownProps> = ({
                 truncate"
                 onClick={() => selectCar(car)}
               >
-                {car.model}
+                {car.Model}
               </li>
             ))}
           </ul>

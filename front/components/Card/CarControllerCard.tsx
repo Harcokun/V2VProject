@@ -3,12 +3,14 @@ import Card from "./Card";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import ButtonWithIcon from "../Button/ButtonWithIcon";
-import CarInfo from "../../utils/types";
-import { defaultCarInfo } from "../../utils/constants";
+// import CarInfo from "../../utils/types";
+import { defaultActiveCarInfo } from "../../utils/constants";
 import DropDownButton from "../Button/DropDownButton";
 import Button from "../Button/Button";
+import { ActiveCarsList, CarInfo } from "../../utils/types";
 
 const SPEED_MULTIPLIER = 250;
+const DEFAULT_MAC_ID = "D6:93:EB:A8:C1:5D";
 
 const CancelButtonStyle = {
   default: {
@@ -19,60 +21,77 @@ const CancelButtonStyle = {
 };
 
 interface CarControllerCardProps {
-  carsList: Array<CarInfo>;
+  activeCarsList: any;
   carService: any;
 }
 
 const CarControllerCard: React.FC<CarControllerCardProps> = ({
-  carsList,
+  activeCarsList,
   carService,
 }) => {
-  const [selectedCarInfo, setSelectedCarInfo] = useState(defaultCarInfo);
+  const [selectedCarInfo, setSelectedCarInfo] = useState(defaultActiveCarInfo);
   const [isFetched, setFetched] = useState(false);
   const [speedLevel, setSpeedLevel] = useState(0);
-  const [isSpeedUpAvaibable, setSpeedUpAvailable] = useState(true);
-  const [isSpeedDownAvaibable, setSpeedDownAvailable] = useState(false);
+  // const [isSpeedUpAvaibable, setSpeedUpAvailable] = useState(true);
+  // const [isSpeedDownAvaibable, setSpeedDownAvailable] = useState(false);
 
   useEffect(() => {
+    console.log(activeCarsList[DEFAULT_MAC_ID]);
+    setSelectedCarInfo(activeCarsList[DEFAULT_MAC_ID]); //
+    setFetched(true);
     console.log(selectedCarInfo);
   }, [selectedCarInfo]);
 
-  const getCarFromDropDown = (car: CarInfo) => {
-    setSelectedCarInfo(car);
-    setFetched(true);
+  // const getCarFromDropDown = (car: any) => {
+  //   setSelectedCarInfo(car);
+  //   setFetched(true);
+  // };
+
+  const handleSpeedUp = async () => {
+    const data = await carService.speedUp();
+    setSpeedLevel(data.speed/250);
+    console.log(`Speed up status: ${JSON.stringify(data)}`);
   };
 
-  const handleSpeedChange = async (velocity: number) => {
-    const response = await carService.changecelocity(selectedCarInfo._id, velocity);
+  const handleSpeedDown = async () => {
+    const data = await carService.speedDown();
+    setSpeedLevel(data.speed/250);
+    console.log(`Speed down status: ${JSON.stringify(data)}`);
   };
 
-  const handleDirectionChange = async (dir: string) => {
-    const response = await carService.changeDir(selectedCarInfo._id, dir);
+  const handleTurnLeft = async () => {
+    const data = await carService.turnLeft();
+    console.log(`Turn left status: ${JSON.stringify(data)}`);
   };
 
-  const speedLevelValidation = (speedLevelDiff: number) => {
-    if (speedLevel + speedLevelDiff >= 4) {
-      setSpeedUpAvailable(false);
-      console.log(`Cannot increase speed!`);
-      console.log(`isSpeedUpAvaibable: ${isSpeedUpAvaibable}`);
-    }
-    if (speedLevel + speedLevelDiff <= 0) {
-      setSpeedDownAvailable(false);
-      console.log(`Cannot decrease speed!`);
-      console.log(`isSpeedDownAvaibable: ${isSpeedDownAvaibable}`);
-    }
-    if (0 < speedLevel + speedLevelDiff && speedLevel + speedLevelDiff < 4) {
-      setSpeedUpAvailable(true);
-      setSpeedDownAvailable(true);
-    }
-    console.log(`Current Speed Level: ${speedLevel}`);
-    setSpeedLevel(speedLevel + speedLevelDiff);
-    handleSpeedChange(SPEED_MULTIPLIER * speedLevel); // Need to wait for currentSpeed update
+  const handleTurnRight = async () => {
+    const data = await carService.turnRight();
+    console.log(`Turn right status: ${JSON.stringify(data)}`);
   };
+
+  // const speedLevelValidation = (speedLevelDiff: number) => {
+  //   if (speedLevel + speedLevelDiff >= 4) {
+  //     setSpeedUpAvailable(false);
+  //     console.log(`Cannot increase speed!`);
+  //     console.log(`isSpeedUpAvaibable: ${isSpeedUpAvaibable}`);
+  //   }
+  //   if (speedLevel + speedLevelDiff <= 0) {
+  //     setSpeedDownAvailable(false);
+  //     console.log(`Cannot decrease speed!`);
+  //     console.log(`isSpeedDownAvaibable: ${isSpeedDownAvaibable}`);
+  //   }
+  //   if (0 < speedLevel + speedLevelDiff && speedLevel + speedLevelDiff < 4) {
+  //     setSpeedUpAvailable(true);
+  //     setSpeedDownAvailable(true);
+  //   }
+  //   console.log(`Current Speed Level: ${speedLevel}`);
+  //   setSpeedLevel(speedLevel + speedLevelDiff);
+  //   handleSpeedChange(SPEED_MULTIPLIER * speedLevel); // Need to wait for currentSpeed update
+  // };
 
   if (isFetched) {
     return (
-      <Card heading={selectedCarInfo.model + " Controller"}>
+      <Card heading={DEFAULT_MAC_ID + " Controller"}>
         <div className="text-center">
           <Image
             className="flex justify-center items-center"
@@ -88,7 +107,7 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
               <tr className="py-2">
                 <td className="text-left">Current Speed</td>
                 <td className="text-right text-emerald-600 text-xl">
-                  {selectedCarInfo.velocity} mm/s, Level {speedLevel}
+                  {selectedCarInfo.speed} mm/s, Level {speedLevel}
                 </td>
               </tr>
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
@@ -104,10 +123,11 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
                     iconPath={"/icons/arrow_back_24px.svg"}
                     iconPosition={"left"}
                     onClick={() => {
-                      console.log(`Decrease Speed`);
-                      speedLevelValidation(-1);
+                      // console.log(`Decrease Speed`);
+                      // speedLevelValidation(-1);
+                      handleSpeedDown();
                     }}
-                    disabled={!isSpeedDownAvaibable}
+                    // disabled={!isSpeedDownAvaibable}
                   />
                 </td>
                 <td className="text-right">
@@ -122,10 +142,11 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
                     iconPath={"/icons/arrow_forward_24px.svg"}
                     iconPosition={"right"}
                     onClick={() => {
-                      console.log(`Increase Speed`);
-                      speedLevelValidation(1);
+                      // console.log(`Increase Speed`);
+                      // speedLevelValidation(1);
+                      handleSpeedUp();
                     }}
-                    disabled={!isSpeedUpAvaibable}
+                    // disabled={!isSpeedUpAvaibable}
                   />
                 </td>
               </tr>
@@ -153,7 +174,7 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
                     iconPath={"/icons/arrow_back_24px.svg"}
                     iconPosition={"left"}
                     onClick={() => {
-                      handleDirectionChange("l");
+                      handleTurnLeft();
                     }}
                   />
                 </td>
@@ -169,22 +190,22 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
                     iconPath={"/icons/arrow_forward_24px.svg"}
                     iconPosition={"right"}
                     onClick={() => {
-                      handleDirectionChange("r");
+                      handleTurnRight();
                     }}
                   />
                 </td>
               </tr>
             </tbody>
           </table>
-          <Button
+          {/* <Button
                   text="Back"
                   colorStyle={CancelButtonStyle}
                   margin={[24, 0, 0, 0]}
                   onClick={() => {
-                    setSelectedCarInfo(defaultCarInfo);
+                    setSelectedCarInfo(defaultActiveCarInfo);
                     setFetched(false);
                   }}
-                />
+                /> */}
         </div>
       </Card>
     );
@@ -205,12 +226,12 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
       <div className="text-center text-lg">
         Please select a car from the list to control.
       </div>
-      <div className="ml-[30%] mt-4">
+      {/* <div className="ml-[30%] mt-4">
         <DropDownButton
           carsData={carsList}
           getCarFromDropDown={getCarFromDropDown}
         />
-      </div>
+      </div> */}
     </Card>
   );
 };

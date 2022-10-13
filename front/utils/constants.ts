@@ -83,31 +83,50 @@ export const lookUpCoordination = {
 
 export const defaultCarInfo = {
   _id: "",
-  model: "",
+  Model: "car",
+  Color: "",
   MacId: "",
-  velocity: 0,
-  piece: -1,
-  location: -1,
-  clockwise: true,
-}
+  Status: "",
+};
 
 export const defaultCarsList = [
   {
     _id: "1",
-    model: "car test 1",
+    Model: "car 01",
+    Color: "red",
     MacId: "12345",
-    velocity: 10,
-    piece: 17,
-    location: 10,
-    clockwise: true,
+    Status: "offline",
   },
   {
     _id: "2",
-    model: "car test 2",
+    Model: "car 02",
+    Color: "blue",
     MacId: "67890",
-    velocity: 5,
-    piece: 17,
-    location: 0,
-    clockwise: false,
+    Status: "offline",
   },
 ];
+
+export const defaultActiveCarInfo = {
+  speed: 0,
+  piece: -1,
+  location: -1,
+  clockwise: true,
+  timestamp: "None",
+}
+
+export const defaultActiveCarsList = {
+    "D6:93:EB:A8:C1:5D": {
+      speed: 10,
+      piece: 20,
+      location: 0,
+      clockwise: true,
+      timestamp: "2022-10-12T13:13:29.579Z",
+    },
+    "ED:9A:B3:A0:20:74": {
+      speed: 5,
+      piece: 34,
+      location: 0,
+      clockwise: false,
+      timestamp: "2022-10-12T13:13:29.579Z",
+  },
+};

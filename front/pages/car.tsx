@@ -14,17 +14,9 @@ const Car: NextPage = () => {
 
   useEffect(() => {
     const initialLoader = async () => {
-      // const carsInfo = await carService.getCarsInfo().data;
-      // setCarsList(carsInfo);
-      setSelectedCarInfo({
-        ...selectedCarInfo,
-        model: "car test 1",
-        MacId: "12345",
-        velocity: 5,
-        piece: 33,
-        location: 0,
-        clockwise: true,
-      });
+      const carsInfo = (await carService.getCarsInfo()).data.cars;
+      setCarsList(carsInfo || defaultCarsList);
+      setSelectedCarInfo(defaultCarInfo);
     };
     initialLoader();
   }, []);

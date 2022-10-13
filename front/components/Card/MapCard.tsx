@@ -10,14 +10,15 @@ const ImagePoint = dynamic(() => import("../ImagePoint/ImagePoint"), {
 });
 
 interface MapCardProps {
-  carsList: Array<any>;
+  activeCarsList: any;
 }
 
-const MapCard: React.FC<MapCardProps> = ({ carsList }) => {
+const MapCard: React.FC<MapCardProps> = ({ activeCarsList }) => {
+
   return (
     <Card heading="Location">
       <div className="text-center">
-        <ImagePoint carsList={carsList} />
+        <ImagePoint activeCarsList={activeCarsList} />
       </div>
     </Card>
   );

@@ -24,19 +24,19 @@ export default class ApiService {
         }
     }
 
-    public async get(url: string, sendToken: boolean = true) {
+    public async get(url: string, sendToken: boolean = false) {
         return await this.client(sendToken).get(url)
     }
 
-    public async post(url: string, data: object, sendToken: boolean = true) {
+    public async post(url: string, data: object, sendToken: boolean = false) {
         return await this.client(sendToken).post(url, data)
     }
 
-    public async patch(url: string, data: object, sendToken: boolean = true) {
+    public async patch(url: string, data: object, sendToken: boolean = false) {
         return await this.client(sendToken).patch(url, data)
     }
 
-    public async delete(url: string, data: object, sendToken: boolean = true) {
+    public async delete(url: string, data: object, sendToken: boolean = false) {
         return await this.client(sendToken).delete(url, data)
     }
 
