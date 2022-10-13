@@ -23,11 +23,11 @@ const Dashboard: NextPage = () => {
       const carsInfo = (await carService.getCarsInfo()).data.cars;
       const activeCarsList =  (await carService.getActiveCarsInfo()).data.data;
       // console.log("activeCarsList in dashboard", activeCarsList);
-      setCarsList(carsInfo);
-      // setCarsList(defaultCarsList);
-      setActiveCarsList(activeCarsList);
-      // await setActiveCarsList(defaultActiveCarsList);
-      await setFetched(true);
+      // setCarsList(carsInfo);
+      setCarsList(defaultCarsList);
+      // setActiveCarsList(activeCarsList);
+      setActiveCarsList(defaultActiveCarsList);
+      setFetched(true);
     }, 1000);
     return () => clearInterval(interval);
   }, []);

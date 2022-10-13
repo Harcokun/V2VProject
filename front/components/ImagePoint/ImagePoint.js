@@ -40,11 +40,11 @@ class ImagePoint extends Component {
       prevPiece: {},
       piece17Pos: {},
       locBuffer: {},
-      getPointFromData: this.getPointFromData,
+      getCoordFromData: this.getCoordFromData,
     };
 
     this.confirmDelete = this.confirmDelete.bind(this);
-    // this.getPointFromData = this.getPointFromData(this.props.carsList);
+    // this.getCoordFromData = this.getCoordFromData(this.props.carsList);
   }
 
   componentDidMount() {
@@ -77,7 +77,7 @@ class ImagePoint extends Component {
     // console.log(prevProps.activeCarsList !== this.props.activeCarsList);
     if (prevProps.activeCarsList !== this.props.activeCarsList) {
       console.log(`Refreshed in ImagePoint!`);
-      this.getPointFromData(this.props.activeCarsList);
+      this.getCoordFromData(this.props.activeCarsList);
     }
   }
 
@@ -143,6 +143,11 @@ class ImagePoint extends Component {
       JSON.stringify([...this.state.imageClickCoordList])
     );
   };
+
+  pointManager = async (activeCarsList) => {
+    let coordList = {};
+
+  }
 
   createPoint = async (x, y, macId) => {
     this.setState(
@@ -220,7 +225,7 @@ class ImagePoint extends Component {
     return location;
   };
 
-  getPointFromData = async (activeCarsList) => {
+  getCoordFromData = async (activeCarsList) => {
     // console.log("activeCarsList in ImagePoint", activeCarsList);
     this.setState(
       {
@@ -345,12 +350,12 @@ class ImagePoint extends Component {
   handleClickImage = (e) => {
     // let { x, y } = this.calculateCoordination(e);
     // this.createPoint(x, y); // do stuff
-    this.getPointFromData(this.props.activeCarsList);
+    this.getCoordFromData(this.props.activeCarsList);
   };
 
   // handleClick = (e) => {
   //   this.inputElement.click();
-  //   this.getPointFromData(this.props.activeCarsList);
+  //   this.getCoordFromData(this.props.activeCarsList);
   // };
 
   handleClickLabel = (e) => {
