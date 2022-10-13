@@ -20,13 +20,13 @@ const Dashboard: NextPage = () => {
 
   useEffect(() => {
     const interval = setInterval( async () => {
-      const carsInfo = (await carService.getCarsInfo()).data.cars;
-      const activeCarsList =  (await carService.getActiveCarsInfo()).data.data;
+      const carsInfo = await defaultCarsList;
+      // const carsInfo = (await carService.getCarsInfo()).data.cars;
+      const activeCarsList = await defaultActiveCarsList;
+      // const activeCarsList =  (await carService.getActiveCarsInfo()).data.data;
       // console.log("activeCarsList in dashboard", activeCarsList);
-      // setCarsList(carsInfo);
-      setCarsList(defaultCarsList);
-      // setActiveCarsList(activeCarsList);
-      setActiveCarsList(defaultActiveCarsList);
+      setCarsList(carsInfo);
+      setActiveCarsList(activeCarsList);
       setFetched(true);
     }, 1000);
     return () => clearInterval(interval);
