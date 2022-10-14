@@ -28,7 +28,7 @@ export default function (app: Express) {
             msg = msg.replace('\\', "")
             console.log(msg);
             
-            Mqtt.publish("@msg/connect", msg)
+            Mqtt.publish("@msg/control", msg)
             return res.status(200).json({
                 success: true,
                 data: msg
@@ -46,7 +46,7 @@ export default function (app: Express) {
             let isSpeedUp: boolean = false; 
             if (speed <= 1000 && speed + 250 <= 1000) {
                 let msg = `{"cmd": "forward", "speed": ${speed + 250}, "acc": 1000}`;
-                Mqtt.publish('@msg/connect', msg);
+                Mqtt.publish('@msg/control', msg);
                 speed += 250; 
                 console.log(`⚡️[mqtt]: Speed: ${speed}`);
                 isSpeedUp = true; 
@@ -71,7 +71,7 @@ export default function (app: Express) {
             let isSpeedDown: boolean = false; 
             if (speed >= 0 && speed - 250 >= 0) {
                 let msg = `{"cmd": "backward", "speed": ${speed - 250}, "acc": 1000}`;
-                Mqtt.publish('@msg/connect', msg);
+                Mqtt.publish('@msg/control', msg);
                 speed -= 250; 
                 console.log(`⚡️[mqtt]: Speed: ${speed}`);
                 isSpeedDown = true; 
@@ -93,7 +93,7 @@ export default function (app: Express) {
     app.get('/turnLeft', async (req: Request, res: Response) => {
         try {
             let msg = `{"cmd": "left", "speed": ${speed}, "acc": 1000}`;
-            Mqtt.publish('@msg/connect', msg);
+            Mqtt.publish('@msg/control', msg);
             console.log(`⚡️[mqtt]: Turn: left`);
             return res.status(200).json({
                 success: true, 
@@ -111,7 +111,7 @@ export default function (app: Express) {
     app.get('/turnRight', async (req: Request, res: Response) => {
         try {
             let msg = `{"cmd": "right", "speed": ${speed}, "acc": 1000}`;
-            Mqtt.publish('@msg/connect', msg);
+            Mqtt.publish('@msg/control', msg);
             console.log(`⚡️[mqtt]: Turn: right`);
             return res.status(200).json({
                 success: true, 
@@ -144,7 +144,7 @@ export default function (app: Express) {
     app.get('/Car/info/:id', async (req: Request, res: Response) => {
         try {
             const car_registration = req.params.id;
-            const data = await Car.findOne({ 'car_registration': car_registration })
+            const data = await Car.findOne({ 'MacId': car_registration })
             return res.status(200).json({
                 success: true, 
                 data: data
