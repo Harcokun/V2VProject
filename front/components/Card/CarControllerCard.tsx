@@ -107,7 +107,7 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
               <tr className="py-2">
                 <td className="text-left">Current Speed</td>
                 <td className="text-right text-emerald-600 text-xl">
-                  {selectedCarInfo.speed} mm/s, Level {speedLevel}
+                  {activeCarsList[DEFAULT_MAC_ID].speed} mm/s, Level {speedLevel}
                 </td>
               </tr>
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
@@ -158,7 +158,7 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
                 <td className="text-left">Location</td>
                 <td className="text-right text-amber-500 text-xl">
-                  Piece {selectedCarInfo.piece}, Index {selectedCarInfo.location}
+                  Piece {activeCarsList[DEFAULT_MAC_ID].piece}, Index {activeCarsList[DEFAULT_MAC_ID].location}
                 </td>
               </tr>
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">
