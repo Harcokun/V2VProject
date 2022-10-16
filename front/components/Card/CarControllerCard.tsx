@@ -36,10 +36,10 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
   // const [isSpeedDownAvaibable, setSpeedDownAvailable] = useState(false);
 
   useEffect(() => {
-    console.log(activeCarsList[DEFAULT_MAC_ID]);
+    // console.log(activeCarsList[DEFAULT_MAC_ID]);
     setSelectedCarInfo(activeCarsList[DEFAULT_MAC_ID]); //
     setFetched(true);
-    console.log(selectedCarInfo);
+    // console.log(selectedCarInfo);
   }, [selectedCarInfo]);
 
   // const getCarFromDropDown = (car: any) => {

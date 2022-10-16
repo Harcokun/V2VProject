@@ -20,14 +20,14 @@ const Dashboard: NextPage = () => {
 
   useEffect(() => {
     const interval = setInterval( async () => {
-      const carsInfo = await defaultCarsList;
+      const carsInfo = defaultCarsList;
       // const carsInfo = (await carService.getCarsInfo()).data.cars;
-      const activeCarsList = await defaultActiveCarsList;
+      const activeCarsList = defaultActiveCarsList;
       // const activeCarsList =  (await carService.getActiveCarsInfo()).data.data;
       // console.log("activeCarsList in dashboard", activeCarsList);
       setCarsList(carsInfo);
       setActiveCarsList(activeCarsList);
-      setFetched(true);
+      if(carsInfo && activeCarsList) setFetched(true);
     }, 1000);
     return () => clearInterval(interval);
   }, []);

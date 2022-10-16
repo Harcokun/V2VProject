@@ -40,11 +40,7 @@ class ImagePoint extends Component {
       prevPiece: {},
       piece17Pos: {},
       locBuffer: {},
-      getPointFromData: this.getPointFromData,
     };
-
-    this.confirmDelete = this.confirmDelete.bind(this);
-    // this.getPointFromData = this.getPointFromData(this.props.carsList);
   }
 
   componentDidMount() {
@@ -77,7 +73,7 @@ class ImagePoint extends Component {
     // console.log(prevProps.activeCarsList !== this.props.activeCarsList);
     if (prevProps.activeCarsList !== this.props.activeCarsList) {
       console.log(`Refreshed in ImagePoint!`);
-      this.getPointFromData(this.props.activeCarsList);
+      this.pointManager(this.props.activeCarsList);
     }
   }
 
@@ -90,9 +86,9 @@ class ImagePoint extends Component {
             id={String(index + 1)}
             x={cur.x}
             y={cur.y}
-            draggable
+            // draggable
             onClick={this.handleClickLabel}
-            onDragEnd={this.handleDragLabelCoordination}
+            // onDragEnd={this.handleDragLabelCoordination}
           >
             <Circle width={25} height={25} fill="red" shadowBlur={5} />
             <Text text={index + 1} offsetX={3} offsetY={3} />
@@ -145,7 +141,6 @@ class ImagePoint extends Component {
   };
 
   createPoint = async (coordList) => {
-    console.log("CoordList: ", coordList);
     let addCircle = {};
     for (let macId in coordList) {
       let text = macId == DEFAULT_MACID ? "1" : "2";
@@ -166,7 +161,6 @@ class ImagePoint extends Component {
         </Label>
       );
     }
-    console.log("addCircle: ", addCircle);
     this.setState(
       {
         imageClickCoordList: [
@@ -176,7 +170,6 @@ class ImagePoint extends Component {
         circleList: [...this.state.circleList, ...Object.values(addCircle)],
       },
       () => {
-        console.log("CircleList: ", this.state.circleList);
         localStorage.setItem(
           "imageClickCoordList",
           JSON.stringify([...this.state.imageClickCoordList])
@@ -221,21 +214,32 @@ class ImagePoint extends Component {
     return location;
   };
 
-  checkIfExistsInState = (activeCarsList) => {
+  clearPreviousPoints() {
+    this.setState(
+      {
+        circleList: [],
+        imageClickCoordList: [],
+      },
+      () => {
+        localStorage.setItem("imageClickCoordList", JSON.stringify([]));
+        // this.circleListAfterDeleteReload(this.state.imageClickCoordList);
+      }
+    );
+  }
+
+  checkIfExistsInState = async (activeCarsList) => {
     let piece17posChange = {};
     let prevPieceChange = {};
     for (let macId in activeCarsList) {
       if (!(macId in this.state.prevPiece)) {
         piece17posChange[macId] = "l";
-        prevPieceChange[macId] = [
-          activeCarsList[macId].piece, "l",
-        ];
+        prevPieceChange[macId] = [activeCarsList[macId].piece, "l"];
       }
     }
     this.setPieceState(piece17posChange, prevPieceChange);
-  }
+  };
 
-  setPieceState = ( piece17posChange, prevPieceChange ) => {
+  setPieceState = (piece17posChange, prevPieceChange) => {
     if (Object.keys(piece17posChange).length != 0) {
       this.setState(
         {
@@ -265,39 +269,35 @@ class ImagePoint extends Component {
         }
       );
     }
-  }
+  };
 
   getPointFromData = async (activeCarsList) => {
     let coordList = {};
-    let piece17posInit = {};
-    let prevPieceInit = {};
     let piece17posChange = {};
     let prevPieceChange = {};
-    this.setState(
-      {
-        circleList: [],
-        imageClickCoordList: [],
-      },
-      () => {
-        localStorage.setItem("imageClickCoordList", JSON.stringify([]));
-        // this.circleListAfterDeleteReload(this.state.imageClickCoordList);
-      }
-    );
-    this.checkIfExistsInState(activeCarsList);
     for (let macId in activeCarsList) {
       if (activeCarsList[macId].piece != 17) {
         let location;
         if (
           activeCarsList[macId].piece == 18 ||
           activeCarsList[macId].piece == 20
-        )
+        ) {
           location = this.scaleSideLocation(activeCarsList[macId].location);
+          if (activeCarsList[macId].piece == 20) piece17posChange[macId] = "l";
+          if (activeCarsList[macId].piece == 18) piece17posChange[macId] = "r";
+        }
         if (activeCarsList[macId].piece == 34)
           location = this.scale34Location(activeCarsList[macId].location);
-        if (activeCarsList[macId].piece == 36)
+        if (activeCarsList[macId].piece == 36) {
           location = this.scale36Location(activeCarsList[macId].location);
-        // if (activeCarsList[macId].piece == 33) location = activeCarsList[macId].location;
-        else location = activeCarsList[macId].location;
+          if (activeCarsList[macId].clockwise == true)
+            piece17posChange[macId] = "l";
+          if (activeCarsList[macId].clockwise == false)
+            piece17posChange[macId] = "r";
+        }
+        if (activeCarsList[macId].piece == 33) {
+          location = activeCarsList[macId].location;
+        }
         coordList[macId] = await lookUpCoordination[
           activeCarsList[macId].piece
         ][location];
@@ -345,19 +345,21 @@ class ImagePoint extends Component {
     this.setPieceState(piece17posChange, prevPieceChange);
     console.log("prevPiece: ", this.state.prevPiece);
     console.log("piece17Pos: ", this.state.piece17Pos);
+    return coordList;
+  };
+
+  pointManager = async (activeCarsList) => {
+    this.clearPreviousPoints();
+    await this.checkIfExistsInState(activeCarsList);
+    let coordList = await this.getPointFromData(activeCarsList);
     await this.createPoint(coordList);
   };
 
   handleClickImage = (e) => {
     // let { x, y } = this.calculateCoordination(e);
     // this.createPoint(x, y); // do stuff
-    this.getPointFromData(this.props.activeCarsList);
+    this.pointManager(this.props.activeCarsList);
   };
-
-  // handleClick = (e) => {
-  //   this.inputElement.click();
-  //   this.getPointFromData(this.props.activeCarsList);
-  // };
 
   handleClickLabel = (e) => {
     // console.log("click label haha");
@@ -372,58 +374,6 @@ class ImagePoint extends Component {
     // } else {
     //       console.log('ID (dblclick) = ' + parseInt(e.target.id()));
     // }
-  };
-
-  confirmDelete() {
-    console.log(this.state.circleList);
-    this.setState(
-      {
-        deleteCircleList: [],
-      },
-      () => {
-        console.log(this.state.deleteCircleList);
-        this.modalToggle();
-      }
-    );
-  }
-
-  confirmModalCircleDelete = () => {
-    for (let deleteCircle of this.state.deleteCircleList) {
-      let alreadyGreaterDeleteCircle = [];
-      let alreadySmallerDeleteCircle = [];
-
-      for (let i = 0; i < this.state.deleteCircleList.length; i++) {
-        if (this.state.deleteCircleList[i] == deleteCircle) {
-          break;
-        }
-
-        if (this.state.deleteCircleList[i] > deleteCircle) {
-          alreadyGreaterDeleteCircle.push(this.state.deleteCircleList[i]);
-        } else {
-          alreadySmallerDeleteCircle.push(this.state.deleteCircleList[i]);
-        }
-      }
-
-      console.log(alreadyGreaterDeleteCircle);
-      console.log(alreadySmallerDeleteCircle);
-
-      let deleteCircleIndex = deleteCircle - 1;
-
-      // if (alreadyGreaterDeleteCircle.length > 0) {
-      //   deleteCircleIndex = deleteCircleIndex - alreadyGreaterDeleteCircle.length;
-      // }
-
-      if (alreadySmallerDeleteCircle.length > 0) {
-        deleteCircleIndex =
-          deleteCircleIndex - alreadySmallerDeleteCircle.length;
-      }
-
-      this.state.imageClickCoordList.splice(deleteCircleIndex, 1);
-    }
-
-    this.circleListAfterDeleteReload(this.state.imageClickCoordList);
-
-    this.modalToggle();
   };
 
   handleZoomStage = (event) => {
@@ -451,29 +401,6 @@ class ImagePoint extends Component {
     }
   };
 
-  modalToggle = () => {
-    this.setState({
-      showModal: !this.state.showModal,
-    });
-  };
-
-  toggleCheckboxHandler = (delete_circle) => () => {
-    // https://stackoverflow.com/questions/66434403/how-to-get-multiple-checkbox-values-in-react-js
-
-    const index = this.state.deleteCircleList.indexOf(delete_circle);
-
-    if (index > -1) {
-      this.state.deleteCircleList.splice(index, 1);
-    } else {
-      this.setState(
-        {
-          deleteCircleList: [...this.state.deleteCircleList, delete_circle],
-        },
-        () => console.log(this.state.deleteCircleList)
-      );
-    }
-  };
-
   render() {
     let { stageWidth, stageHeight } = this.state;
     // console.log(this.state.image);
@@ -486,7 +413,6 @@ class ImagePoint extends Component {
 
     return (
       <div key={this.props.carsList} onClick={this.handleClick}>
-        {/* <input ref={(input) => (this.inputElement = input)} /> */}
         <Stage
           key={this.props.carsList}
           style={{ backgroundColor: "rgb(166, 162, 154)", overflow: "hidden" }}
@@ -509,37 +435,6 @@ class ImagePoint extends Component {
             </Group>
           </Layer>
         </Stage>
-        <button onClick={this.confirmDelete}>Delete</button>
-
-        <Modal
-          isOpen={this.state.showModal}
-          toggle={this.modalToggle}
-          className={this.props.className}
-        >
-          <ModalHeader toggle={this.modalToggle}>
-            Delete Circle Point
-          </ModalHeader>
-          <ModalBody>
-            <ul>
-              {this.state.circleList.map((cur, index) => (
-                <CirclePointList
-                  key={index}
-                  label={index + 1}
-                  toggleCheckboxHandler={this.toggleCheckboxHandler}
-                  deleteCircleList={this.state.deleteCircleList}
-                />
-              ))}
-            </ul>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="primary" onClick={this.confirmModalCircleDelete}>
-              Delete
-            </Button>{" "}
-            <Button color="secondary" onClick={this.modalToggle}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </Modal>
       </div>
     );
   }
