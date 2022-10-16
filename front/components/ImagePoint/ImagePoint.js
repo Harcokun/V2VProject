@@ -144,20 +144,19 @@ class ImagePoint extends Component {
     let addCircle = {};
     for (let macId in coordList) {
       let text = macId == DEFAULT_MACID ? "1" : "2";
+      let imagePath = coordList[macId]["carDir"] == "l"? "/icons/car_icon_red_left.png" : "/icons/car_icon_red_right.png";
       addCircle[macId] = (
         <Label
           id={macId}
-          x={coordList[macId]["x"]}
-          y={coordList[macId]["y"]}
+          x={coordList[macId]["x"] - 30}
+          y={coordList[macId]["y"] - 10}
           // draggable
           onClick={this.handleClickLabel}
           // onDragEnd={this.handleDragLabelCoordination}
         >
-          <Circle width={25} height={25} fill="red" shadowBlur={5} />
-          {/* <Images
-          img={"/icons/car_icon_red.png"}
-        /> */}
-          <Text text={text} offsetX={3} offsetY={3} />
+          {/* <Circle width={25} height={25} fill="red" shadowBlur={5} /> */}
+          <Images img={imagePath} />
+          <Text text={text} offsetX={-27} offsetY={-10} />
         </Label>
       );
     }
@@ -213,6 +212,25 @@ class ImagePoint extends Component {
     if (location >= 47) return 37;
     return location;
   };
+
+  setCarDirection = (piece, clockwise) => {
+    if(clockwise == true) {
+      if(piece == 20) return "r"
+      if(piece == 33) return "r";
+      if(piece == 34) return "r";
+      if(piece == 18) return "r";
+      if(piece == 17) return "l";
+      if(piece == 36) return "l";
+    }
+    else {
+      if(piece == 20) return "l"
+      if(piece == 33) return "l";
+      if(piece == 34) return "l";
+      if(piece == 18) return "l";
+      if(piece == 17) return "r";
+      if(piece == 36) return "r";
+    }
+  }
 
   clearPreviousPoints() {
     this.setState(
@@ -276,6 +294,8 @@ class ImagePoint extends Component {
     let piece17posChange = {};
     let prevPieceChange = {};
     for (let macId in activeCarsList) {
+      let carDir = this.setCarDirection(activeCarsList[macId].piece, activeCarsList[macId].clockwise);
+      let coordXY = {};
       if (activeCarsList[macId].piece != 17) {
         let location;
         if (
@@ -298,9 +318,10 @@ class ImagePoint extends Component {
         if (activeCarsList[macId].piece == 33) {
           location = activeCarsList[macId].location;
         }
-        coordList[macId] = await lookUpCoordination[
+        coordXY = await lookUpCoordination[
           activeCarsList[macId].piece
         ][location];
+        coordList[macId] = { ...coordXY, ["carDir"]: carDir }
       } else {
         let location = this.scaleSideLocation(activeCarsList[macId].location);
         if (
@@ -310,9 +331,10 @@ class ImagePoint extends Component {
             activeCarsList[macId].clockwise == true)
         ) {
           piece17posChange[macId] = "l"; // Go to piece 17-l
-          coordList[macId] = await lookUpCoordination[
+          coordXY = await lookUpCoordination[
             activeCarsList[macId].piece
           ]["l"][location];
+          coordList[macId] = { ...coordXY, ["carDir"]: carDir }
         }
         if (
           (this.state.prevPiece[macId][0] == 36 &&
@@ -321,13 +343,15 @@ class ImagePoint extends Component {
             activeCarsList[macId].clockwise == true)
         ) {
           piece17posChange[macId] = "r"; // Go to piece 17-r
-          coordList[macId] = await lookUpCoordination[
+          coordXY = await lookUpCoordination[
             activeCarsList[macId].piece
           ]["r"][location];
+          coordList[macId] = { ...coordXY, ["carDir"]: carDir }
         } else {
-          coordList[macId] = await lookUpCoordination[
+          coordXY = await lookUpCoordination[
             activeCarsList[macId].piece
           ][this.state.piece17Pos[macId]][location];
+          coordList[macId] = { ...coordXY, ["carDir"]: carDir }
         }
       }
       // console.log(`macId: ${macId}`);
