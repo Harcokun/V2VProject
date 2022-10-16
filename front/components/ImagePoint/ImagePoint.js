@@ -67,10 +67,10 @@ class ImagePoint extends Component {
       this.setState({ piece17Pos: { ...jsonPiece17Pos } });
     }
 
-    // let jsonLocBuffer = JSON.parse(localStorage.getItem("locBuffer"));
-    // if (jsonLocBuffer) {
-    //   this.setState({ locBuffer: { ...jsonLocBuffer } });
-    // }
+    let jsonLocBuffer = JSON.parse(localStorage.getItem("locBuffer"));
+    if (jsonLocBuffer) {
+      this.setState({ locBuffer: { ...jsonLocBuffer } });
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -145,23 +145,24 @@ class ImagePoint extends Component {
   };
 
   createPoint = async (coordList) => {
-    // console.log("CoordList: ", coordList);
+    console.log("CoordList: ", coordList);
     let addCircle = {};
     for (let macId in coordList) {
       let text = macId == DEFAULT_MACID ? "1" : "2";
-      let imagePath = coordList[macId]["dir"] == "l"? "/icons/car_icon_red_left.png" : "/icons/car_icon_red_right.png";
       addCircle[macId] = (
         <Label
           id={macId}
-          x={coordList[macId]["x"] - 30}
-          y={coordList[macId]["y"] - 10}
+          x={coordList[macId]["x"]}
+          y={coordList[macId]["y"]}
           // draggable
           onClick={this.handleClickLabel}
           // onDragEnd={this.handleDragLabelCoordination}
         >
-          {/* <Circle width={25} height={25} fill="red" shadowBlur={5} /> */}
-          <Images img={imagePath} />
-          <Text text={text} offsetX={-27} offsetY={-10} />
+          <Circle width={25} height={25} fill="red" shadowBlur={5} />
+          {/* <Images
+          img={"/icons/car_icon_red.png"}
+        /> */}
+          <Text text={text} offsetX={3} offsetY={3} />
         </Label>
       );
     }
@@ -175,7 +176,7 @@ class ImagePoint extends Component {
         circleList: [...this.state.circleList, ...Object.values(addCircle)],
       },
       () => {
-        // console.log("CircleList: ", this.state.circleList);
+        console.log("CircleList: ", this.state.circleList);
         localStorage.setItem(
           "imageClickCoordList",
           JSON.stringify([...this.state.imageClickCoordList])
@@ -220,41 +221,9 @@ class ImagePoint extends Component {
     return location;
   };
 
-  setCarDirection = (piece, clockwise) => {
-    if(clockwise == true) {
-      if(piece == 20) return "r"
-      if(piece == 33) return "r";
-      if(piece == 34) return "r";
-      if(piece == 18) return "r";
-      if(piece == 17) return "l";
-      if(piece == 36) return "l";
-    }
-    else {
-      if(piece == 20) return "l"
-      if(piece == 33) return "l";
-      if(piece == 34) return "l";
-      if(piece == 18) return "l";
-      if(piece == 17) return "r";
-      if(piece == 36) return "r";
-    }
-  }
-
-  getPointFromData = async (activeCarsList) => {
-    let coordList = {};
-    let piece17posInit = {};
-    let prevPieceInit = {};
+  checkIfExistsInState = (activeCarsList) => {
     let piece17posChange = {};
     let prevPieceChange = {};
-    this.setState(
-      {
-        circleList: [],
-        imageClickCoordList: [],
-      },
-      () => {
-        localStorage.setItem("imageClickCoordList", JSON.stringify([]));
-        // this.circleListAfterDeleteReload(this.state.imageClickCoordList);
-      }
-    );
     for (let macId in activeCarsList) {
       if (!(macId in this.state.prevPiece)) {
         piece17posChange[macId] = "l";
@@ -262,69 +231,11 @@ class ImagePoint extends Component {
           activeCarsList[macId].piece, "l",
         ];
       }
-      let carDir = this.setCarDirection(activeCarsList[macId].piece, activeCarsList[macId].clockwise);
-      console.log("carDir: ", carDir);
-      let coordXY;
-      if (activeCarsList[macId].piece != 17) {
-        let location;
-        if (
-          activeCarsList[macId].piece == 18 ||
-          activeCarsList[macId].piece == 20
-        )
-          location = this.scaleSideLocation(activeCarsList[macId].location);
-        if (activeCarsList[macId].piece == 34)
-          location = this.scale34Location(activeCarsList[macId].location);
-        if (activeCarsList[macId].piece == 36)
-          location = this.scale36Location(activeCarsList[macId].location);
-        // if (activeCarsList[macId].piece == 33) location = activeCarsList[macId].location;
-        else location = activeCarsList[macId].location;
-        coordXY = await lookUpCoordination[
-          activeCarsList[macId].piece
-        ][location];
-        coordList[macId] = { ...coordXY, "carDir": carDir}
-      } else {
-        let location = this.scaleSideLocation(activeCarsList[macId].location);
-        if (
-          (this.state.prevPiece[macId][0] == 20 &&
-            activeCarsList[macId].clockwise == false) ||
-          (this.state.prevPiece[macId][0] == 36 &&
-            activeCarsList[macId].clockwise == true)
-        ) {
-          console.log("this.state.prevPiece: ", this.state.prevPiece);
-          piece17posChange[macId] = "l"; // Go to piece 17-l
-          coordXY = await lookUpCoordination[
-            activeCarsList[macId].piece
-          ]["l"][location];
-          coordList[macId] = { ...coordXY, "carDir": carDir}
-        }
-        if (
-          (this.state.prevPiece[macId][0] == 36 &&
-            activeCarsList[macId].clockwise == false) ||
-          (this.state.prevPiece[macId][0] == 18 &&
-            activeCarsList[macId].clockwise == true)
-        ) {
-          piece17posChange[macId] = "r"; // Go to piece 17-r
-          coordXY = await lookUpCoordination[
-            activeCarsList[macId].piece
-          ]["r"][location];
-          coordList[macId] = { ...coordXY, "carDir": carDir}
-        } else {
-          coordXY = await lookUpCoordination[
-            activeCarsList[macId].piece
-          ][this.state.piece17Pos[macId]][location];
-          coordList[macId] = { ...coordXY, "carDir": carDir}
-        }
-      }
-      // console.log(`macId: ${macId}`);
-      // console.log("this.state.prevPiece", this.state.prevPiece);
-      if (this.state.prevPiece[macId][0] != activeCarsList[macId].piece) {
-        // Piece changes
-        prevPieceChange[macId] = [
-          activeCarsList[macId].piece,
-          this.state.piece17Pos[macId],
-        ];
-      }
     }
+    this.setPieceState(piece17posChange, prevPieceChange);
+  }
+
+  setPieceState = ( piece17posChange, prevPieceChange ) => {
     if (Object.keys(piece17posChange).length != 0) {
       this.setState(
         {
@@ -354,6 +265,84 @@ class ImagePoint extends Component {
         }
       );
     }
+  }
+
+  getPointFromData = async (activeCarsList) => {
+    let coordList = {};
+    let piece17posInit = {};
+    let prevPieceInit = {};
+    let piece17posChange = {};
+    let prevPieceChange = {};
+    this.setState(
+      {
+        circleList: [],
+        imageClickCoordList: [],
+      },
+      () => {
+        localStorage.setItem("imageClickCoordList", JSON.stringify([]));
+        // this.circleListAfterDeleteReload(this.state.imageClickCoordList);
+      }
+    );
+    this.checkIfExistsInState(activeCarsList);
+    for (let macId in activeCarsList) {
+      if (activeCarsList[macId].piece != 17) {
+        let location;
+        if (
+          activeCarsList[macId].piece == 18 ||
+          activeCarsList[macId].piece == 20
+        )
+          location = this.scaleSideLocation(activeCarsList[macId].location);
+        if (activeCarsList[macId].piece == 34)
+          location = this.scale34Location(activeCarsList[macId].location);
+        if (activeCarsList[macId].piece == 36)
+          location = this.scale36Location(activeCarsList[macId].location);
+        // if (activeCarsList[macId].piece == 33) location = activeCarsList[macId].location;
+        else location = activeCarsList[macId].location;
+        coordList[macId] = await lookUpCoordination[
+          activeCarsList[macId].piece
+        ][location];
+      } else {
+        let location = this.scaleSideLocation(activeCarsList[macId].location);
+        if (
+          (this.state.prevPiece[macId][0] == 20 &&
+            activeCarsList[macId].clockwise == false) ||
+          (this.state.prevPiece[macId][0] == 36 &&
+            activeCarsList[macId].clockwise == true)
+        ) {
+          piece17posChange[macId] = "l"; // Go to piece 17-l
+          coordList[macId] = await lookUpCoordination[
+            activeCarsList[macId].piece
+          ]["l"][location];
+        }
+        if (
+          (this.state.prevPiece[macId][0] == 36 &&
+            activeCarsList[macId].clockwise == false) ||
+          (this.state.prevPiece[macId][0] == 18 &&
+            activeCarsList[macId].clockwise == true)
+        ) {
+          piece17posChange[macId] = "r"; // Go to piece 17-r
+          coordList[macId] = await lookUpCoordination[
+            activeCarsList[macId].piece
+          ]["r"][location];
+        } else {
+          coordList[macId] = await lookUpCoordination[
+            activeCarsList[macId].piece
+          ][this.state.piece17Pos[macId]][location];
+        }
+      }
+      // console.log(`macId: ${macId}`);
+      // console.log("this.state.prevPiece", this.state.prevPiece);
+      if (this.state.prevPiece[macId][0] != activeCarsList[macId].piece) {
+        // Piece changes
+        prevPieceChange[macId] = [
+          activeCarsList[macId].piece,
+          this.state.piece17Pos[macId],
+        ];
+      }
+    }
+    console.log("piece17posChange: ", piece17posChange);
+    console.log("prevPieceChange: ", prevPieceChange);
+    this.setPieceState(piece17posChange, prevPieceChange);
     console.log("prevPiece: ", this.state.prevPiece);
     console.log("piece17Pos: ", this.state.piece17Pos);
     await this.createPoint(coordList);
