@@ -1,5 +1,20 @@
 front/node_modules/*
+<<<<<<< HEAD
 front/next/*
 front/.env
+=======
+back/node_modules/*
+back/config/config.env
+back/*.js
+back/*/*.js
+back/services/*/*.js
+back/*.pem
+>>>>>>> backend-dev
 
 back/.env
+
+influx/*
+
+telegraf/*
+
+influxd.bolt

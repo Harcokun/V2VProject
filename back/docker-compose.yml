@@ -1,48 +1,17 @@
-version: '3'
-
-networks:
-  influxdb-telegraf-net:
-    driver: bridge
-
-volumes:
-  influxdb2:
+version: "3"
 
 services:
-  mariadb: 
-    image: mariadb:latest
-    container_name: mariadb
-    ports:
-      - 3306:3306
-    volumes:
-      - ~/apps/mariadb:/var/lib/sql
-    environment:
-      - MYSQL_ROOT_PASSWORD=AdhocAdmin
-      - MYSQL_DATABASE=Adhoc
-
   influxdb:
-    image: influxdb:latest
+    image: influxdb:2.1.1
     container_name: influxdb2
     volumes:
-      - ../influx/data:/var/lib/influxdb2:rw
+      - influxdb-storage:/var/lib/influxdb2:rw
     env_file:
       - .env
     entrypoint: ["./entrypoint.sh"]
+    restart: on-failure:10
     ports:
-      - 8086:8086
-    restart: unless-stopped
+      - ${DOCKER_INFLUXDB_INIT_PORT}:8086
 
-  telegraf:
-    image: telegraf:latest
-    container_name: telegraf
-    links:
-      - influxdb
-    volumes:
-      #  Sync timezone with host
-      - /etc/localtime:/etc/localtime:ro
-      #  Map Telegraf configuration file
-      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
-      #  Map /tmp to permanent storage  (this includes /tmp/metrics.out)
-      - ../telegraf/outputs:/tmp:rw
-    restart: unless-stopped
-    depends_on:
-      - influxdb
+volumes:
+  influxdb-storage:
