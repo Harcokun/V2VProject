@@ -84,14 +84,15 @@ class ImagePoint extends Component {
         (circleListTemp[index] = (
           <Label
             id={String(index + 1)}
-            x={cur.x}
-            y={cur.y}
+            x={cur.x - 30}
+            y={cur.y - 10}
             // draggable
             onClick={this.handleClickLabel}
             // onDragEnd={this.handleDragLabelCoordination}
           >
-            <Circle width={25} height={25} fill="red" shadowBlur={5} />
-            <Text text={index + 1} offsetX={3} offsetY={3} />
+            {/* <Circle width={25} height={25} fill="red" shadowBlur={5} /> */}
+            <Images img={cur.imagePath} />
+            <Text text={index + 1} offsetX={-30} offsetY={-10} />
           </Label>
         ))
     );
@@ -144,7 +145,16 @@ class ImagePoint extends Component {
     let addCircle = {};
     for (let macId in coordList) {
       let text = macId == DEFAULT_MACID ? "1" : "2";
-      let imagePath = coordList[macId]["carDir"] == "l"? "/icons/car_icon_red_left.png" : "/icons/car_icon_red_right.png";
+      let imagePath = "";
+      if(text == "1") {
+        if(coordList[macId]["carDir"] == "l") imagePath = "/icons/car_icon_red_left.png";
+        if(coordList[macId]["carDir"] == "r") imagePath = "/icons/car_icon_red_right.png";
+      }
+      if(text == "2") {
+        if(coordList[macId]["carDir"] == "l") imagePath = "/icons/car_icon_blue_left.png";
+        if(coordList[macId]["carDir"] == "r") imagePath = "/icons/car_icon_blue_right.png";
+      }
+      coordList[macId]["imagePath"] = imagePath;
       addCircle[macId] = (
         <Label
           id={macId}
@@ -156,7 +166,7 @@ class ImagePoint extends Component {
         >
           {/* <Circle width={25} height={25} fill="red" shadowBlur={5} /> */}
           <Images img={imagePath} />
-          <Text text={text} offsetX={-27} offsetY={-10} />
+          <Text text={text} offsetX={-30} offsetY={-10} />
         </Label>
       );
     }
