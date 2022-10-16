@@ -257,16 +257,10 @@ class ImagePoint extends Component {
     );
     for (let macId in activeCarsList) {
       if (!(macId in this.state.prevPiece)) {
-        this.setState({
-          piece17Pos: { ...this.state.piece17Pos, [macId]: "l" },
-          prevPiece: {
-            ...this.state.prevPiece,
-            [macId]: [
-              activeCarsList[macId].piece,
-              this.state.piece17Pos[macId] ? this.state.piece17Pos[macId] : "l",
-            ],
-          },
-        });
+        piece17posChange[macId] = "l";
+        prevPieceChange[macId] = [
+          activeCarsList[macId].piece, "l",
+        ];
       }
       let carDir = this.setCarDirection(activeCarsList[macId].piece, activeCarsList[macId].clockwise);
       console.log("carDir: ", carDir);
