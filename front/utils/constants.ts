@@ -117,15 +117,15 @@ export const defaultActiveCarInfo = {
 export const defaultActiveCarsList = {
     "D6:93:EB:A8:C1:5D": {
       speed: 10,
-      piece: 34,
-      location: 11,
+      piece: 36,
+      location: 32,
       clockwise: false,
       timestamp: "2022-10-12T13:13:29.579Z",
     },
     "ED:9A:B3:A0:20:74": {
       speed: 5,
-      piece: 34,
-      location: 10,
+      piece: 36,
+      location: 30,
       clockwise: false,
       timestamp: "2022-10-12T13:13:29.579Z",
   },

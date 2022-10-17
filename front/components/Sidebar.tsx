@@ -25,14 +25,14 @@ const Sidebar: React.FC<SidebarProps> = ({}) => {
       >
         Dashboard
       </li>
-      <li
+      {/* <li
         className="static font-bold text-lg my-4 ml-10"
         onClick={() => {
           router.push("/car");
         }}
       >
         Car Management
-      </li>
+      </li> */}
     </div>
   );
 };
