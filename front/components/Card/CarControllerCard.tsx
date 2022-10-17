@@ -42,6 +42,10 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
     // console.log(selectedCarInfo);
   }, [selectedCarInfo]);
 
+  useEffect(() => {
+    localStorage.setItem("sharedSpeedLevel", JSON.stringify(speedLevel));
+  }, [speedLevel]);
+
   // const getCarFromDropDown = (car: any) => {
   //   setSelectedCarInfo(car);
   //   setFetched(true);
@@ -90,6 +94,10 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
   // };
 
   if (isFetched) {
+    let showingSpeed = activeCarsList[DEFAULT_MAC_ID].speed;
+    if(speedLevel == 0) {
+      showingSpeed = 0; 
+    }
     return (
       <Card heading={DEFAULT_MAC_ID + " Controller"}>
         <div className="text-center">
@@ -107,7 +115,7 @@ const CarControllerCard: React.FC<CarControllerCardProps> = ({
               <tr className="py-2">
                 <td className="text-left">Current Speed</td>
                 <td className="text-right text-emerald-600 text-xl">
-                  {activeCarsList[DEFAULT_MAC_ID].speed} mm/s, Level {speedLevel}
+                  {showingSpeed} mm/s, Level {speedLevel}
                 </td>
               </tr>
               <tr className="font-sans w-5/6 mx-auto mb-4 text-s">

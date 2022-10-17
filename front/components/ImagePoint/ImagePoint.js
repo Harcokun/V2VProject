@@ -199,6 +199,15 @@ class ImagePoint extends Component {
     return location;
   };
 
+  scale33Location = (location) => {
+    if (location <= 0) return 0;
+    if (location >= 0 && location <= 4) return 0;
+    if (location >= 5 && location <= 9) return 5;
+    if (location >= 10 && location <= 14) return 10;
+    if (location >= 15) return 15;
+    return location;
+  };
+
   scale34Location = (location) => {
     if (location <= 0) return 0;
     if (location >= 1 && location <= 4) return 1;
@@ -326,7 +335,7 @@ class ImagePoint extends Component {
             piece17posChange[macId] = "r";
         }
         if (activeCarsList[macId].piece == 33) {
-          location = activeCarsList[macId].location;
+          location = this.scale33Location(activeCarsList[macId].location);
         }
         coordXY = await lookUpCoordination[
           activeCarsList[macId].piece

@@ -23,6 +23,10 @@ export default class CarService {
         return response;
     }
 
+    public getSharedSpeedLevel() {
+        return localStorage.getItem("sharedSpeedLevel");
+    }
+
     public addCar = async (data: any) => {
         const response = await this.apiService.post(Endpoint.CAR, data, false);
         return response;
